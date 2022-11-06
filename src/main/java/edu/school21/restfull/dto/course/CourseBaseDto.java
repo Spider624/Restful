@@ -28,23 +28,8 @@ public abstract class CourseBaseDto {
 	@Size(message = "Name Of Course incorrect", min = 1, max = 255)
 	String name;
 
-//	@ApiModelProperty(value = "Teacher", required = true)
-//	@NotEmpty(message = "Teacher name isn't defined")
-//	@Size(message = "Teacher name incorrect", min = 1, max = 50)
-//	User teacher;
-//
-//	@ApiModelProperty(value = "Student", required = true)
-//	@NotEmpty(message = "Student isn't defined")
-//	@Size(message = "Student incorrect", min = 5, max = 50)
-//	User student;
-
 	@ApiModelProperty(value = "Description", required = true)
 	@NotNull(message = "Description isn't defined")
 	String description;
-
-//	@ApiModelProperty(value = "lesson", required = true)
-//	@NotNull(message = "There are no lessons in this course")
-//	Lesson lesson;
-
 
 }

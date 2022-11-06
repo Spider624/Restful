@@ -19,7 +19,7 @@ public class CourseController {
 
 	@ApiOperation("Create course")
 	@PostMapping
-	public CourseCreateOutDto createCourse(@RequestBody @Valid CourseCreateInDto dto) {
+	public CourseCreateOutDto createCourse(@RequestBody @Valid CourseInDto dto) {
 		return courseService.createCourse(dto);
 	}
 
@@ -37,7 +37,7 @@ public class CourseController {
 
 	@ApiOperation("Update course")
 	@PutMapping("{courseId}")
-	public void updateCourse(@PathVariable("courseId") long courseId, @RequestBody @Valid CourseUpdateInDto dto) {
+	public void updateCourse(@PathVariable("courseId") long courseId, @RequestBody CourseInDto dto) {
 		courseService.updateCourse(courseId, dto);
 	}
 

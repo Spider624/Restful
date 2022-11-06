@@ -24,7 +24,7 @@ public class Course extends AbstractModel {
 	@Column(nullable = false)
 	private LocalDate endDate;
 
-	@Column(nullable = false, length = NAME_COURSE_LENGTH)
+	@Column(nullable = false, length = NAME_COURSE_LENGTH, unique = true)
 	private String name;
 
 //	@Column(nullable = false, unique = true)
@@ -33,12 +33,10 @@ public class Course extends AbstractModel {
 //	@Column(nullable = false, unique = true)
 //	private ArrayList<User> student;
 
-	@Column(nullable = false, length = DESCRIPTION_LENGTH)
+	@Column(nullable = true, length = DESCRIPTION_LENGTH)
 	private String description;
 
 //	@Column(nullable = false)
 //	private ArrayList<Lesson> lesson;
-
-
 
 }

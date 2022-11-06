@@ -28,7 +28,7 @@ public class CourseService {
 	private PaginationMapper paginationMapper;
 
 	@Transactional
-	public CourseCreateOutDto createCourse(CourseCreateInDto dto) {
+	public CourseOutDto createCourse(CourseInDto dto) {
 		if (courseRepository.existsByName(dto.getName())) {
 			throw new RestfullBadRequestException("Course is already exists");
 		}
@@ -38,9 +38,9 @@ public class CourseService {
 
 		courseRepository.save(course);
 
-		log.debug("Course [{}] was created", course.getDescription());
+		log.debug("Course [{}] was created", course.getName());
 
-		return new CourseCreateOutDto(course.getId());
+		return new CourseOutDto(course.getId());
 	}
 
 	@Transactional(readOnly = true)
@@ -54,7 +54,7 @@ public class CourseService {
 	}
 
 	@Transactional
-	public void updateCourse(long courseId, CourseUpdateInDto dto) {
+	public void updateCourse(long courseId, CourseInDto dto) {
 		Course course = findAndMap(courseId, Function.identity());
 		courseMapper.update(course, dto);
 

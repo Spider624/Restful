@@ -26,9 +26,4 @@ public abstract class LessonBaseDto {
 	@Size(message = "DayOfWeek Of Lesson incorrect", min = 1, max = 10)
 	String dayOfWeek;
 
-//	@ApiModelProperty(value = "Teacher", required = true)
-//	@NotEmpty(message = "Teacher name isn't defined")
-//	@Size(message = "Teacher name incorrect", min = 1, max = 50)
-//	User teacher;
-
 }

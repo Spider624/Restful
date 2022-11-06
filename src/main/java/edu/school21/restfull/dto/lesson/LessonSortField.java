@@ -14,11 +14,10 @@ public enum LessonSortField implements SortField {
 	START_DATE("startDate"),
 	END_DATE("endDate"),
 	DAY_OF_WEEK("dayOfWeek");
-	//,
-	//TEACHERS("teachers");
 
 	private final String dataFieldName;
 
+	@Override
 	public String getDataFieldName() {
 		return dataFieldName;
 	}

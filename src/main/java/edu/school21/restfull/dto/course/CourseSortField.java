@@ -14,14 +14,11 @@ public enum CourseSortField implements SortField {
 	START_DATE("startDate"),
 	END_DATE("endDate"),
 	NAME("name"),
-	//TEACHERS("teachers"),
-	//STUDENTS("students"),
 	DESCRIPTION("description");
-	//,
-	//LESSONS("lessons");
 
 	private final String dataFieldName;
 
+	@Override
 	public String getDataFieldName() {
 		return dataFieldName;
 	}

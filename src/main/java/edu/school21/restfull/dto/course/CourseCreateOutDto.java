@@ -4,11 +4,11 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Value;
 
-@ApiModel("Created course info")
+@ApiModel("Detail course info")
 @Value
-public class CourseCreateOutDto {
+public class CourseCreateOutDto extends CourseBaseDto {
 
-	@ApiModelProperty(value = "Created Course ID")
+	@ApiModelProperty(value = "Created Course Id")
 	Long id;
 
 }
