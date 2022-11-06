@@ -26,13 +26,13 @@ public class CourseCreateInDto extends CourseBaseInDto {
 	String name;
 
 	@JsonCreator
-	public CourseCreateInDto(	@JsonProperty("StartDate") LocalDate startDate,
-								 @JsonProperty("EndDate") LocalDate endDate,
-								 @JsonProperty("Name") String name,
-								 //@JsonProperty("Teacher") User teacher,
-								 //@JsonProperty("Student") User student,
-								 @JsonProperty("Description") String description )//,
-	//@JsonProperty("Lesson") Lesson lesson)
+	public CourseCreateInDto(@JsonProperty("startDate") LocalDate startDate,
+							 @JsonProperty("endDate") LocalDate endDate,
+							 @JsonProperty("name") String name,
+							 //@JsonProperty("teacher") User teacher,
+							 //@JsonProperty("student") User student,
+							 @JsonProperty("description") String description )//,
+							//@JsonProperty("Lesson") Lesson lesson)
 	{
 		super(startDate, endDate, name,
 				//teacher, student,

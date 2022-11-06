@@ -22,13 +22,13 @@ public class CourseOutDto extends CourseBaseDto {
 	Long id;
 
 	@JsonCreator
-	public CourseOutDto(@JsonProperty("StartDate") LocalDate startDate,
-						@JsonProperty("EndDate") LocalDate endDate,
-						@JsonProperty("Name") String name,
-						//@JsonProperty("Teacher") User teacher,
-						//@JsonProperty("Student") User student,
-						@JsonProperty("Description") String description,
-	//@JsonProperty("Lesson") Lesson lesson)
+	public CourseOutDto(@JsonProperty("startDate") LocalDate startDate,
+						@JsonProperty("endDate") LocalDate endDate,
+						@JsonProperty("name") String name,
+						//@JsonProperty("teacher") User teacher,
+						//@JsonProperty("student") User student,
+						@JsonProperty("description") String description,
+						//@JsonProperty("lesson") Lesson lesson)
 						@JsonProperty("id") Long id)
 	{
 		super(startDate, endDate, name,

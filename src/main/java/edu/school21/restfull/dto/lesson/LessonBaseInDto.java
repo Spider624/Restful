@@ -17,11 +17,11 @@ import java.time.LocalDate;
 public abstract class LessonBaseInDto extends LessonBaseDto {
 
 	@JsonCreator
-	public LessonBaseInDto(@JsonProperty("StartDate") LocalDate startDate,
-						   @JsonProperty("EndDate") LocalDate endDate,
-						   @JsonProperty("DayOfWeek") String dayOfWeek
+	public LessonBaseInDto(@JsonProperty("startDate") LocalDate startDate,
+						   @JsonProperty("endDate") LocalDate endDate,
+						   @JsonProperty("dayOfWeek") String dayOfWeek
 //			,
-//						   @JsonProperty("Teacher") User teacher
+//						   @JsonProperty("teacher") User teacher
 						   )
 	{
 		super(startDate, endDate, dayOfWeek

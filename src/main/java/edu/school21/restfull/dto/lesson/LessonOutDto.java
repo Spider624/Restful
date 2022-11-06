@@ -21,10 +21,10 @@ public class LessonOutDto extends LessonBaseDto {
 	Long id;
 
 	@JsonCreator
-	public LessonOutDto(@JsonProperty("StartDate") LocalDate startDate,
-						@JsonProperty("EndDate") LocalDate endDate,
-						@JsonProperty("DayOfWeek") String dayOfWeek,
-//						   @JsonProperty("Teacher") User teacher
+	public LessonOutDto(@JsonProperty("startDate") LocalDate startDate,
+						@JsonProperty("endDate") LocalDate endDate,
+						@JsonProperty("dayOfWeek") String dayOfWeek,
+//						   @JsonProperty("teacher") User teacher
 						@JsonProperty("id") Long id)
 	{
 		super(startDate, endDate, dayOfWeek
