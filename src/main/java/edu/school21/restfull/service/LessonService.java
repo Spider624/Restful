@@ -29,16 +29,16 @@ public class LessonService {
 
 	@Transactional
 	public LessonCreateOutDto createLesson(LessonInDto dto) {
-		if (lessonRepository.existsByDayOfWeek(dto.getDayOfWeek())) {
-			throw new RestfullBadRequestException("lesson is already exists");
-		}
+//		if (lessonRepository.existsByDayOfWeek(dto.getDayOfWeek())) {
+//			throw new RestfullBadRequestException("lesson is already exists");
+//		}
 
 		Lesson lesson = new Lesson();
 		lessonMapper.update(lesson, dto);
 
 		lessonRepository.save(lesson);
 
-		log.debug("Lesson [{}] was created", lesson.getDayOfWeek());
+		log.debug("Lesson [{}] was created", lesson.getId());
 
 		return new LessonCreateOutDto(lesson.getId());
 	}

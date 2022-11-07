@@ -14,18 +14,18 @@ import java.time.LocalDate;
 @Table(name = "restfull_lesson")
 public class Lesson extends AbstractModel {
 
-	public static final int NAME_COURSE_LENGTH = 177;
+	public static final int NAME_DAY_OF_WEEK_LENGTH = 10;
 
-	@Column(nullable = false)
+	@Column(nullable = false, unique = false)
 	private LocalDate startDate;
 
-	@Column(nullable = false)
+	@Column(nullable = false, unique = false)
 	private LocalDate endDate;
 
-	@Column(nullable = false)
+	@Column(nullable = false, length = NAME_DAY_OF_WEEK_LENGTH, unique = false)
 	private String dayOfWeek;
 
-//	@Column(nullable = false, unique = true)
+//	@Column(nullable = false, unique = false)
 //	private User teacher;
 
 }

@@ -1,11 +1,11 @@
 package edu.school21.restfull.dto.lesson;
 
-import edu.school21.restfull.model.User;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
@@ -14,11 +14,11 @@ import java.time.LocalDate;
 public abstract class LessonBaseDto {
 
 	@ApiModelProperty(value = "StartDate", required = true)
-	@NotEmpty(message = "No start date selected")
+	@NotNull(message = "No start date selected")
 	LocalDate startDate;
 
 	@ApiModelProperty(value = "EndDate", required = true)
-	@NotEmpty(message = "No end date selected")
+	@NotNull(message = "No end date selected")
 	LocalDate endDate;
 
 	@ApiModelProperty(value = "DayOfWeek", required = true)
