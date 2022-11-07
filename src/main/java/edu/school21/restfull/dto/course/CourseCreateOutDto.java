@@ -6,7 +6,7 @@ import lombok.Value;
 
 @ApiModel("Detail course info")
 @Value
-public class CourseCreateOutDto extends CourseBaseDto {
+public class CourseCreateOutDto{
 
 	@ApiModelProperty(value = "Created Course Id")
 	Long id;

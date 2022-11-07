@@ -28,7 +28,7 @@ public class LessonService {
 	private PaginationMapper paginationMapper;
 
 	@Transactional
-	public LessonOutDto createLesson(LessonInDto dto) {
+	public LessonCreateOutDto createLesson(LessonInDto dto) {
 		if (lessonRepository.existsByDayOfWeek(dto.getDayOfWeek())) {
 			throw new RestfullBadRequestException("lesson is already exists");
 		}
@@ -40,7 +40,7 @@ public class LessonService {
 
 		log.debug("Lesson [{}] was created", lesson.getDayOfWeek());
 
-		return new LessonOutDto(lesson.getId());
+		return new LessonCreateOutDto(lesson.getId());
 	}
 
 	@Transactional(readOnly = true)

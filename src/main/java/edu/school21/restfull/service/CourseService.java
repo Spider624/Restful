@@ -28,7 +28,7 @@ public class CourseService {
 	private PaginationMapper paginationMapper;
 
 	@Transactional
-	public CourseOutDto createCourse(CourseInDto dto) {
+	public CourseCreateOutDto createCourse(CourseInDto dto) {
 		if (courseRepository.existsByName(dto.getName())) {
 			throw new RestfullBadRequestException("Course is already exists");
 		}
@@ -40,7 +40,7 @@ public class CourseService {
 
 		log.debug("Course [{}] was created", course.getName());
 
-		return new CourseOutDto(course.getId());
+		return new CourseCreateOutDto(course.getId());
 	}
 
 	@Transactional(readOnly = true)
