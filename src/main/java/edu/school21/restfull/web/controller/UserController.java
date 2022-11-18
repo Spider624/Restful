@@ -7,10 +7,12 @@ import edu.school21.restfull.dto.user.UserCreateOutDto;
 import edu.school21.restfull.dto.user.UserOutDto;
 import edu.school21.restfull.dto.user.UserSortField;
 import edu.school21.restfull.dto.user.UserUpdateInDto;
+import edu.school21.restfull.model.type.UserRole;
 import edu.school21.restfull.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +32,7 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
+	@Secured(value = UserRole.Authorities.ADMIN)
 	@ApiOperation("Create user")
 	@PostMapping
 	public UserCreateOutDto createUser(@RequestBody @Valid UserCreateInDto dto) {
@@ -48,12 +51,14 @@ public class UserController {
 		return userService.getUser(userId);
 	}
 
+	@Secured(value = UserRole.Authorities.ADMIN)
 	@ApiOperation("Update user")
 	@PutMapping("{userId}")
 	public void updateUser(@PathVariable("userId") long userId, @RequestBody @Valid UserUpdateInDto dto) {
 		userService.updateUser(userId, dto);
 	}
 
+	@Secured(UserRole.Authorities.ADMIN)
 	@ApiOperation("Delete user")
 	@DeleteMapping("{userId}")
 	public void deleteUser(@PathVariable("userId") long userId) {

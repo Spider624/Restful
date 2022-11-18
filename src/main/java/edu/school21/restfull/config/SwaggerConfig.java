@@ -6,8 +6,12 @@ import org.springframework.context.annotation.Profile;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.ApiKey;
+import springfox.documentation.service.AuthorizationScope;
 import springfox.documentation.service.Contact;
+import springfox.documentation.service.SecurityReference;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger.web.DocExpansion;
 import springfox.documentation.swagger.web.ModelRendering;
@@ -31,12 +35,30 @@ public class SwaggerConfig {
 		return new Docket(DocumentationType.SWAGGER_2)
 				.directModelSubstitute(LocalDate.class, String.class)
 				.directModelSubstitute(LocalTime.class, String.class)
+				.securityContexts(Collections.singletonList(securityContext()))
+				.securitySchemes(Collections.singletonList(apiKey()))
 				.select()
-				.apis(RequestHandlerSelectors.any())
-				.paths(PathSelectors.ant("/users/**").or(PathSelectors.ant("/courses/**")))
+				.apis(RequestHandlerSelectors.basePackage("edu.school21.restfull"))
 				.build()
 				.apiInfo(apiInfo())
 				.groupName("Api");
+	}
+
+	private ApiKey apiKey() {
+		return new ApiKey("JWT", "Authorization", "header");
+	}
+
+	private SecurityContext securityContext() {
+		return SecurityContext.builder()
+				.securityReferences(Collections.singletonList(jwtAuthReference()))
+				.build();
+	}
+
+	private SecurityReference jwtAuthReference() {
+		AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
+		AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
+		authorizationScopes[0] = authorizationScope;
+		return new SecurityReference("JWT", authorizationScopes);
 	}
 
 	@Bean

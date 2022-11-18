@@ -4,6 +4,7 @@ import edu.school21.restfull.exception.RestfullRuntimeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -43,6 +44,12 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ErrorResponse> constraintViolationExceptionHandler(ConstraintViolationException e) {
 		e.printStackTrace();
 		return new ResponseEntity<>(buildResponse(HttpStatus.BAD_REQUEST, e.getMessage()), HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<ErrorResponse> exceptionHandler(AccessDeniedException e) {
+		e.printStackTrace();
+		return new ResponseEntity<>(buildResponse(HttpStatus.FORBIDDEN, e.getMessage()), HttpStatus.FORBIDDEN);
 	}
 
 	@ExceptionHandler(Exception.class)

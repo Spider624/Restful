@@ -2,17 +2,28 @@ package edu.school21.restfull.model.type;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.security.core.GrantedAuthority;
 
-@Getter
 @AllArgsConstructor
-public enum UserRole {
+public enum UserRole implements GrantedAuthority {
 
-	ADMIN("ROLE_ADMIN"),
-	TEACHER("ROLE_TEACHER"),
-	STUDENT("ROLE_STUDENT");
+	ADMIN(Authorities.ADMIN),
+	TEACHER(Authorities.TEACHER),
+	STUDENT(Authorities.STUDENT);
 
 	public static final int LENGTH = 15;
 
-	private String role;
+	private String authority;
+
+	@Override
+	public String getAuthority() {
+		return authority;
+	}
+
+	public static class Authorities {
+		public static final String ADMIN = "ROLE_ADMIN";
+		public static final String TEACHER = "ROLE_TEACHER";
+		public static final String STUDENT = "ROLE_STUDENT";
+	}
 
 }
