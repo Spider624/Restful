@@ -5,7 +5,9 @@ import edu.school21.restfull.dto.pagination.Pagination;
 import edu.school21.restfull.exception.RestfullBadRequestException;
 import edu.school21.restfull.exception.RestfullNotFoundException;
 import edu.school21.restfull.model.Lesson;
+import edu.school21.restfull.model.User;
 import edu.school21.restfull.repository.LessonRepository;
+import edu.school21.restfull.repository.UserRepository;
 import edu.school21.restfull.web.maaper.LessonMapper;
 import edu.school21.restfull.web.maaper.PaginationMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -29,9 +31,6 @@ public class LessonService {
 
 	@Transactional
 	public LessonCreateOutDto createLesson(LessonInDto dto) {
-//		if (lessonRepository.existsByDayOfWeek(dto.getDayOfWeek())) {
-//			throw new RestfullBadRequestException("lesson is already exists");
-//		}
 
 		Lesson lesson = new Lesson();
 		lessonMapper.update(lesson, dto);
@@ -68,6 +67,12 @@ public class LessonService {
 
 		log.debug("Lesson [{}] was deleted", lesson.getId());
 	}
+
+//	@Transactional
+//	public User findTeacher(long teacherId) {
+//		User user = UserRepository.findById(teacherId).map(map).orElseThrow(() -> new RestfullNotFoundException("Teacher not found"));
+//
+//	}
 
 
 	private <T> T findAndMap(long lessonId, Function<Lesson, T> map) {

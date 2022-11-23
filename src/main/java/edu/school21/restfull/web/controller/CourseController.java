@@ -37,7 +37,7 @@ public class CourseController {
 
 	@ApiOperation("Update course")
 	@PutMapping("{courseId}")
-	public void updateCourse(@PathVariable("courseId") long courseId, @RequestBody CourseInDto dto) {
+	public void updateCourse(@PathVariable("courseId") long courseId, @RequestBody @Valid CourseInDto dto) {
 		courseService.updateCourse(courseId, dto);
 	}
 

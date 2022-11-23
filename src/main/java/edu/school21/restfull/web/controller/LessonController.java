@@ -40,7 +40,8 @@ public class LessonController {
 
 	@ApiOperation("Update lesson")
 	@PutMapping("{lessonId}")
-	public void updateLesson(@PathVariable("lessonId") long lessonId, @RequestBody LessonInDto dto) {
+	public void updateLesson(@PathVariable("lessonId") long lessonId, @RequestBody @Valid LessonInDto dto,
+							 long teacherId) {
 		lessonService.updateLesson(lessonId, dto);
 	}
 

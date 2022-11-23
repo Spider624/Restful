@@ -1,12 +1,11 @@
 package edu.school21.restfull.model;
 
+import edu.school21.restfull.model.type.DayOfWeek;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import java.time.LocalDate;
+import javax.persistence.*;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -14,18 +13,17 @@ import java.time.LocalDate;
 @Table(name = "restfull_lesson")
 public class Lesson extends AbstractModel {
 
-	public static final int NAME_DAY_OF_WEEK_LENGTH = 10;
+	@Column(nullable = false, unique = false)
+	private LocalTime startTime;
 
 	@Column(nullable = false, unique = false)
-	private LocalDate startDate;
+	private LocalTime endTime;
 
-	@Column(nullable = false, unique = false)
-	private LocalDate endDate;
+	@Column(nullable = false)
+	private DayOfWeek dayOfWeek;
 
-	@Column(nullable = false, length = NAME_DAY_OF_WEEK_LENGTH, unique = false)
-	private String dayOfWeek;
-
-//	@Column(nullable = false, unique = false)
-//	private User teacher;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "teacherId")
+	private User teacher;
 
 }

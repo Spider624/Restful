@@ -11,8 +11,8 @@ public enum LessonSortField implements SortField {
 
 	ID("id"),
 
-	START_DATE("startDate"),
-	END_DATE("endDate"),
+	START_TIME("startTime"),
+	END_TIME("endTime"),
 	DAY_OF_WEEK("dayOfWeek");
 
 	private final String dataFieldName;

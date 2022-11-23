@@ -3,11 +3,10 @@ package edu.school21.restfull.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -27,16 +26,18 @@ public class Course extends AbstractModel {
 	@Column(nullable = false, length = NAME_COURSE_LENGTH, unique = true)
 	private String name;
 
-//	@Column(nullable = false, unique = true)
-//	private ArrayList<User> teacher;
-//
-//	@Column(nullable = false, unique = true)
-//	private ArrayList<User> student;
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name="teachers", nullable = false, updatable = false)
+	private List<User> teachers = new ArrayList<>();
+
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name="students", nullable = false, updatable = false)
+	private List<User> students = new ArrayList<>();
 
 	@Column(nullable = true, length = DESCRIPTION_LENGTH)
 	private String description;
 
-//	@Column(nullable = false)
-//	private ArrayList<Lesson> lesson;
-
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name="course_id", nullable = true, updatable = true)
+	private List<Lesson> lessons = new ArrayList<>();
 }

@@ -2,6 +2,8 @@ package edu.school21.restfull.dto.lesson;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import edu.school21.restfull.model.User;
+import edu.school21.restfull.model.type.DayOfWeek;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
@@ -9,6 +11,7 @@ import lombok.ToString;
 import lombok.Value;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @ApiModel("Detail lesson info")
 @Value
@@ -20,12 +23,13 @@ public class LessonOutDto extends LessonBaseDto {
 	Long id;
 
 	@JsonCreator
-	public LessonOutDto(@JsonProperty("startDate") LocalDate startDate,
-					   @JsonProperty("endDate") LocalDate endDate,
-					   @JsonProperty("dayOfWeek") String dayOfWeek,
-						@JsonProperty("id") Long id)
+	public LessonOutDto(@JsonProperty("startTime") LocalTime startTime,
+						@JsonProperty("endTime") LocalTime endTime,
+						@JsonProperty("dayOfWeek") DayOfWeek dayOfWeek,
+						@JsonProperty("id") Long id,
+						@JsonProperty("teacherId") long teacherId)
 	{
-		super(startDate, endDate, dayOfWeek);
+		super(startTime, endTime, dayOfWeek, teacherId);
 		this.id = id;
 	}
 }

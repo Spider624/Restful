@@ -16,4 +16,19 @@ public abstract class LessonMapper {
 
 	public abstract LessonOutDto map(Lesson lesson);
 
+//	public Long map(User user) {
+//		return user.getId();
+//	}
+//
+//	@Mapping(target = "users", source = "users")
+//	public abstract List<User> map(Long teacherId);
+
+//	User INSTANSE = Mappers.getMapper()
+//	@Bean
+//	public ObjectMapper jsonObjectMapper() {
+//		return Jackson2ObjectMapperBuilder.json()
+//				.modules(new JavaTimeModule())
+//				.build();
+//	}
+
 }

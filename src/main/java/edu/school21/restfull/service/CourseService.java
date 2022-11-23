@@ -50,7 +50,9 @@ public class CourseService {
 
 	@Transactional(readOnly = true)
 	public CourseOutDto getCourse(long courseId) {
-		return findAndMap(courseId, courseMapper::map);
+//		return findAndMap(courseId, courseMapper::map);
+		Course course = courseRepository.findById(courseId).orElseThrow(() -> new RestfullNotFoundException("Course not found"));
+		return courseMapper.map(course);
 	}
 
 	@Transactional
