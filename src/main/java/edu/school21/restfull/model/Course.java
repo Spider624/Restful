@@ -27,11 +27,13 @@ public class Course extends AbstractModel {
 	private String name;
 
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name="teachers", nullable = false, updatable = false)
+	@JoinTable(name = "teachers_courses", joinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id"),
+			inverseJoinColumns = @JoinColumn(name = "teacher_id", referencedColumnName = "id"))
 	private List<User> teachers = new ArrayList<>();
 
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name="students", nullable = false, updatable = false)
+	@JoinTable(name = "students_courses", joinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id"),
+			inverseJoinColumns = @JoinColumn(name = "student_id", referencedColumnName = "id"))
 	private List<User> students = new ArrayList<>();
 
 	@Column(nullable = true, length = DESCRIPTION_LENGTH)

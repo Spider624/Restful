@@ -14,17 +14,17 @@ import javax.validation.constraints.Size;
 public abstract class UserBaseDto {
 
 	@ApiModelProperty(value = "First name", required = true)
-	@NotEmpty(message = "First name isn't defined")
+	@NotNull(message = "First name isn't defined")
 	@Size(message = "First name incorrect", min = 1, max = 50)
 	String firstName;
 
 	@ApiModelProperty(value = "Last name", required = true)
-	@NotEmpty(message = "Last name isn't defined")
+	@NotNull(message = "Last name isn't defined")
 	@Size(message = "Last name incorrect", min = 1, max = 50)
 	String lastName;
 
 	@ApiModelProperty(value = "Login", required = true)
-	@NotEmpty(message = "Login isn't defined")
+	@NotNull(message = "Login isn't defined")
 	@Size(message = "Login incorrect", min = 5, max = 50)
 	String login;
 

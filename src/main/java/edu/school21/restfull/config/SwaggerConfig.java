@@ -35,18 +35,6 @@ public class SwaggerConfig {
 	}
 
 	@Bean
-	public Docket apiLesson() {
-		return new Docket(DocumentationType.SWAGGER_2)
-				.directModelSubstitute(LocalTime.class, String.class)
-				.select()
-				.apis(RequestHandlerSelectors.any())
-				.paths(PathSelectors.ant("/lessons/**"))
-				.build()
-				.apiInfo(apiInfo())
-				.groupName("lessons");
-	}
-
-	@Bean
 	public Docket apiMessage() {
 		return new Docket(DocumentationType.SWAGGER_2)
 				.select()
