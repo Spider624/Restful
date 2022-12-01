@@ -133,6 +133,9 @@ public class CourseService {
 		if (user.getRole() != UserRole.TEACHER){
 			throw new RestfullBadRequestException("User not a teacher");
 		}
+		if (course.getTeachers().contains(user)){
+			throw new RestfullBadRequestException("User is already on course");
+		}
 		course.getTeachers().add(user);
 	}
 
@@ -152,6 +155,9 @@ public class CourseService {
 		User user = userRepository.findById(studentId).get();
 		if (user.getRole() != UserRole.STUDENT){
 			throw new RestfullBadRequestException("User not a student");
+		}
+		if (course.getStudents().contains(user)){
+			throw new RestfullBadRequestException("User is already on course");
 		}
 		course.getStudents().add(user);
 	}
