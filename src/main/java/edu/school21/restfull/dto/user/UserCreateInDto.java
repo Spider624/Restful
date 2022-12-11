@@ -9,7 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.Value;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @ApiModel("User info for creation")
@@ -19,7 +19,7 @@ import javax.validation.constraints.Size;
 public class UserCreateInDto extends UserBaseInDto {
 
 	@ApiModelProperty(value = "Password", required = true)
-	@NotEmpty(message = "Password isn't defined")
+	@NotNull(message = "Password isn't defined")
 	@Size(message = "Password incorrect", min = 5)
 	String password;
 

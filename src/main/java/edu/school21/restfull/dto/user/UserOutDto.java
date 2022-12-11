@@ -19,11 +19,11 @@ public class UserOutDto extends UserBaseDto {
 	Long id;
 
 	@JsonCreator
-	public UserOutDto(@JsonProperty("firstName") String firstName,
+	public UserOutDto(@JsonProperty("id") Long id,
+					  @JsonProperty("firstName") String firstName,
 					  @JsonProperty("lastName") String lastName,
 					  @JsonProperty("login") String login,
-					  @JsonProperty("role") UserRole role,
-					  @JsonProperty("id") Long id) {
+					  @JsonProperty("role") UserRole role) {
 		super(firstName, lastName, login, role);
 		this.id = id;
 	}

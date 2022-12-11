@@ -1,5 +1,6 @@
 package edu.school21.restfull.web.maaper;
 
+import edu.school21.restfull.dto.user.CourseUserDto;
 import edu.school21.restfull.dto.user.UserBaseInDto;
 import edu.school21.restfull.dto.user.UserOutDto;
 import edu.school21.restfull.model.User;
@@ -16,5 +17,7 @@ public abstract class UserMapper {
 	public abstract void update(@MappingTarget User target, UserBaseInDto source);
 
 	public abstract UserOutDto map(User user);
+
+	public abstract CourseUserDto mapCourseUser(User user);
 
 }
