@@ -1,5 +1,6 @@
 package edu.school21.restfull.web.handler;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import edu.school21.restfull.exception.RestfullRuntimeException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +43,12 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(ConstraintViolationException.class)
 	public ResponseEntity<ErrorResponse> constraintViolationExceptionHandler(ConstraintViolationException e) {
+		e.printStackTrace();
+		return new ResponseEntity<>(buildResponse(HttpStatus.BAD_REQUEST, e.getMessage()), HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ResponseEntity<ErrorResponse> httpMessageNotReadableException(HttpMessageNotReadableException e) {
 		e.printStackTrace();
 		return new ResponseEntity<>(buildResponse(HttpStatus.BAD_REQUEST, e.getMessage()), HttpStatus.BAD_REQUEST);
 	}

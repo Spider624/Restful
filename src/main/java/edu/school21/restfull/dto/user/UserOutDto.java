@@ -8,11 +8,13 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.Value;
+import org.springframework.hateoas.server.core.Relation;
 
 @ApiModel("Detail user info")
 @Value
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
+@Relation(collectionRelation = "users", itemRelation = "user")
 public class UserOutDto extends UserBaseDto {
 
 	@ApiModelProperty(value = "Id")
