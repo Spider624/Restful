@@ -16,6 +16,7 @@ import springfox.documentation.swagger.web.UiConfiguration;
 import springfox.documentation.swagger.web.UiConfigurationBuilder;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
 
@@ -26,23 +27,14 @@ public class SwaggerConfig {
 	@Bean
 	public Docket apiGroup() {
 		return new Docket(DocumentationType.SWAGGER_2)
+				.directModelSubstitute(LocalDate.class, String.class)
+				.directModelSubstitute(LocalTime.class, String.class)
 				.select()
 				.apis(RequestHandlerSelectors.any())
-				.paths(PathSelectors.ant("/courses/**"))
+				.paths(PathSelectors.ant("/users/**").or(PathSelectors.ant("/courses/**")))
 				.build()
 				.apiInfo(apiInfo())
-				.groupName("courses");
-	}
-
-	@Bean
-	public Docket apiMessage() {
-		return new Docket(DocumentationType.SWAGGER_2)
-				.select()
-				.apis(RequestHandlerSelectors.any())
-				.paths(PathSelectors.ant("/users/**"))
-				.build()
-				.apiInfo(apiInfo())
-				.groupName("users");
+				.groupName("Api");
 	}
 
 	@Bean

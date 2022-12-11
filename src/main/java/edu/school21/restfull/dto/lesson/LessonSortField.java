@@ -10,10 +10,10 @@ import lombok.AllArgsConstructor;
 public enum LessonSortField implements SortField {
 
 	ID("id"),
-
 	START_TIME("startTime"),
 	END_TIME("endTime"),
-	DAY_OF_WEEK("dayOfWeek");
+	WEEK_DAY("weekDay"),
+	TEACHER("teacher");
 
 	private final String dataFieldName;
 

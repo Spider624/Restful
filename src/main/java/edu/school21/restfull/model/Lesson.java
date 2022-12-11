@@ -1,6 +1,6 @@
 package edu.school21.restfull.model;
 
-import edu.school21.restfull.model.type.DayOfWeek;
+import edu.school21.restfull.model.type.WeekDay;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,17 +13,21 @@ import java.time.LocalTime;
 @Table(name = "restfull_lesson")
 public class Lesson extends AbstractModel {
 
-	@Column(nullable = false, unique = false)
+	@Column(nullable = false)
 	private LocalTime startTime;
 
-	@Column(nullable = false, unique = false)
+	@Column(nullable = false)
 	private LocalTime endTime;
 
-	@Column(nullable = false)
-	private DayOfWeek dayOfWeek;
+	@Column(nullable = false, length = WeekDay.LENGTH)
+	private WeekDay weekDay;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "teacherId")
+	@JoinColumn(name = "teacherId", nullable = false)
 	private User teacher;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "course_id", nullable = false, updatable = false)
+	private Course course;
 
 }

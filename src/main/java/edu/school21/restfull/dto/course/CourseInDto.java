@@ -19,11 +19,10 @@ import java.time.LocalDate;
 public class CourseInDto extends CourseBaseDto {
 
 	@JsonCreator
-	public CourseInDto(@JsonProperty("startDate") LocalDate startDate,
-					   @JsonProperty("endDate") LocalDate endDate,
-					   @JsonProperty("name") String name,
-					   @JsonProperty("description") String description )
-	{
+	public CourseInDto(@JsonProperty("name") String name,
+					   @JsonProperty("description") String description,
+					   @JsonProperty("startDate") LocalDate startDate,
+					   @JsonProperty("endDate") LocalDate endDate) {
 		super(startDate, endDate, name, description);
 	}
 

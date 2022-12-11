@@ -18,16 +18,17 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = true)
 public class CourseOutDto extends CourseBaseDto {
 
-	@ApiModelProperty(value = "Created Course Id")
+	@ApiModelProperty(value = "Created course Id")
 	Long id;
+
 	@JsonCreator
-	public CourseOutDto(@JsonProperty("startDate") LocalDate startDate,
-					   @JsonProperty("endDate") LocalDate endDate,
-					   @JsonProperty("name") String name,
-					   @JsonProperty("description") String description,
-						@JsonProperty("id") Long id)
-	{
+	public CourseOutDto(@JsonProperty("id") Long id,
+						@JsonProperty("name") String name,
+						@JsonProperty("description") String description,
+						@JsonProperty("startDate") LocalDate startDate,
+						@JsonProperty("endDate") LocalDate endDate) {
 		super(startDate, endDate, name, description);
 		this.id = id;
 	}
+
 }

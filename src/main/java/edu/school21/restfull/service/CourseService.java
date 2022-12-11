@@ -6,7 +6,10 @@ import edu.school21.restfull.dto.lesson.LessonOutDto;
 import edu.school21.restfull.dto.lesson.LessonSortField;
 import edu.school21.restfull.dto.pagination.Pagination;
 import edu.school21.restfull.dto.course.*;
-import edu.school21.restfull.dto.user.UserOutDto;
+import edu.school21.restfull.dto.user.CourseUserDto;
+import edu.school21.restfull.dto.user.StudentSortField;
+import edu.school21.restfull.dto.user.TeacherSortField;
+import edu.school21.restfull.dto.user.UserSortField;
 import edu.school21.restfull.exception.RestfullBadRequestException;
 import edu.school21.restfull.exception.RestfullNotFoundException;
 import edu.school21.restfull.model.Course;
@@ -26,23 +29,41 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.function.Function;
 
 @Slf4j
 @Service
 public class CourseService {
 
+	@PersistenceContext
+	private EntityManager entityManager;
+
 	@Autowired
 	private CourseRepository courseRepository;
+	@Autowired
+	private LessonRepository lessonRepository;
+	@Autowired
+	private UserRepository userRepository;
+
 	@Autowired
 	private CourseMapper courseMapper;
 	@Autowired
 	private PaginationMapper paginationMapper;
+	@Autowired
+	private LessonMapper lessonMapper;
+	@Autowired
+	private UserMapper userMapper;
 
 	@Transactional
 	public CourseCreateOutDto createCourse(CourseInDto dto) {
 		if (courseRepository.existsByName(dto.getName())) {
 			throw new RestfullBadRequestException("Course is already exists");
+		}
+
+		if (dto.getStartDate().isAfter(dto.getEndDate())) {
+			throw new RestfullBadRequestException("Start date should be before end date");
 		}
 
 		Course course = new Course();
@@ -62,17 +83,20 @@ public class CourseService {
 
 	@Transactional(readOnly = true)
 	public CourseOutDto getCourse(long courseId) {
-//		return findAndMap(courseId, courseMapper::map);
-		Course course = courseRepository.findById(courseId).orElseThrow(() -> new RestfullNotFoundException("Course not found"));
-		return courseMapper.map(course);
+		return findAndMapCourse(courseId, courseMapper::map);
 	}
 
 	@Transactional
 	public void updateCourse(long courseId, CourseInDto dto) {
-		Course course = findAndMapC(courseId, Function.identity());
-		if (courseRepository.existsByName(dto.getName())) {
-			throw new RestfullBadRequestException("Course is already exists");
+		Course course = findCourse(courseId);
+		if (!course.getName().equals(dto.getName()) && courseRepository.existsByName(dto.getName())) {
+			throw new RestfullBadRequestException("Name is already busy");
 		}
+
+		if (dto.getStartDate().isAfter(dto.getEndDate())) {
+			throw new RestfullBadRequestException("Start date should be before end date");
+		}
+
 		courseMapper.update(course, dto);
 
 		log.debug("Course [{}] was updated", course.getName());
@@ -80,133 +104,176 @@ public class CourseService {
 
 	@Transactional
 	public void deleteCourse(long courseId) {
-		Course course = findAndMapC(courseId, Function.identity());
+		Course course = findCourse(courseId);
 		courseRepository.delete(course);
 
 		log.debug("Course [{}] was deleted", course.getName());
 	}
 
-
-	private <T> T findAndMapC(long courseId, Function<Course, T> map) {
-		return courseRepository.findById(courseId)
-				.map(map)
-				.orElseThrow(() -> new RestfullNotFoundException("Course not found"));
+	@Transactional(readOnly = true)
+	public Page<LessonOutDto> getLessons(long courseId, Pagination<LessonSortField> pagination) {
+		return lessonRepository.findAllByCourse(findCourse(courseId), paginationMapper.map(pagination))
+				.map(lessonMapper::map);
 	}
-
-	@Autowired
-	private LessonRepository lessonRepository;
-	@Autowired
-	private LessonMapper lessonMapper;
-	@Autowired
-	private UserRepository userRepository;
 
 	@Transactional
 	public LessonCreateOutDto createLesson(long courseId, LessonInDto dto) {
+		Course course = findCourse(courseId);
 
-		Course course = courseRepository.findById(courseId).get();
-		long teacherId = dto.getTeacherId();
-		User teacher = userRepository.findById(teacherId).get();
-		if (teacher.getRole() != UserRole.TEACHER){
+		User teacher = findUser(dto.getTeacherId());
+		if (teacher.getRole() != UserRole.TEACHER) {
 			throw new RestfullBadRequestException("User is not a teacher");
 		}
-		if (!course.getTeachers().contains(teacher)){
-			throw new RestfullBadRequestException("User is not a teacher for this course");
+
+		if (!course.getTeachers().contains(teacher)) {
+			throw new RestfullNotFoundException("Teacher not found in the course");
+		}
+
+		if (dto.getStartTime().isAfter(dto.getEndTime())) {
+			throw new RestfullBadRequestException("Start time should be before end time");
 		}
 
 		Lesson lesson = new Lesson();
 		lessonMapper.update(lesson, dto);
 		lesson.setTeacher(teacher);
-
-		course.getLessons().add(lesson);
+		lesson.setCourse(course);
 
 		lessonRepository.save(lesson);
 
-		log.debug("Lesson [{}] was created", lesson.getId());
+		log.debug("Lesson [{}] was create for course [{}]", lesson.getId(), courseId);
 
 		return new LessonCreateOutDto(lesson.getId());
 	}
 
 	@Transactional
-	public void addTeacher(long courseId, long teacherId){
-		Course course = courseRepository.findById(courseId).get();
-		User user = userRepository.findById(teacherId).get();
-		if (user.getRole() != UserRole.TEACHER){
-			throw new RestfullBadRequestException("User not a teacher");
+	public void updateLesson(long courseId, long lessonId, LessonInDto dto) {
+		Lesson lesson = findLesson(courseId, lessonId);
+
+		if (dto.getStartTime().isAfter(dto.getEndTime())) {
+			throw new RestfullBadRequestException("Start time should be before end time");
 		}
-		if (course.getTeachers().contains(user)){
-			throw new RestfullBadRequestException("User is already on course");
-		}
-		course.getTeachers().add(user);
-	}
 
-	@Transactional
-	public void removeTeacher(long courseId, long teacherId){
-		Course course = courseRepository.findById(courseId).get();
-		User user = userRepository.findById(teacherId).get();
-
-		if (!course.getTeachers().remove(user)){
-			throw new RestfullBadRequestException("Teacher to remove is not exists");
-		}
-	}
-
-	@Transactional
-	public void addStudent(long courseId, long studentId){
-		Course course = courseRepository.findById(courseId).get();
-		User user = userRepository.findById(studentId).get();
-		if (user.getRole() != UserRole.STUDENT){
-			throw new RestfullBadRequestException("User not a student");
-		}
-		if (course.getStudents().contains(user)){
-			throw new RestfullBadRequestException("User is already on course");
-		}
-		course.getStudents().add(user);
-	}
-
-	@Transactional
-	public void removeStudent(long courseId, long studentId){
-		Course course = courseRepository.findById(courseId).get();
-		User user = userRepository.findById(studentId).get();
-
-		if (!course.getStudents().remove(user)){
-			throw new RestfullBadRequestException("Student to remove is not exists");
-		}
-	}
-
-
-	@Transactional(readOnly = true)
-	public Page<LessonOutDto> getLessons(Pagination<LessonSortField> pagination) {
-		return lessonRepository.findAll(paginationMapper.map(pagination)).map(lessonMapper::map);
-	}
-
-	@Transactional(readOnly = true)
-	public LessonOutDto getLesson(long lessonId) {
-		return findAndMap(lessonId, lessonMapper::map);
-	}
-
-	@Transactional
-	public void updateLesson(long lessonId, LessonInDto dto) {
-		Lesson lesson = findAndMap(lessonId, Function.identity());
 		lessonMapper.update(lesson, dto);
+
+		if (dto.getStartTime().isAfter(dto.getEndTime())) {
+			throw new RestfullBadRequestException("Start time should be before end time");
+		}
+
+		if (!lesson.getTeacher().getId().equals(dto.getTeacherId())) {
+			User teacher = findUser(dto.getTeacherId());
+			if (teacher.getRole() != UserRole.TEACHER) {
+				throw new RestfullBadRequestException("User is not a teacher");
+			}
+
+			if (!lesson.getCourse().getTeachers().contains(teacher)) {
+				throw new RestfullNotFoundException("Teacher not found in the course");
+			}
+
+			lesson.setTeacher(teacher);
+		}
 
 		log.debug("Lesson [{}] was updated", lesson.getId());
 	}
 
 	@Transactional
-	public void deleteLesson(long lessonId) {
-		Lesson lesson = findAndMap(lessonId, Function.identity());
+	public void deleteLesson(long courseId, long lessonId) {
+		Lesson lesson = findLesson(courseId, lessonId);
 		lessonRepository.delete(lesson);
 
 		log.debug("Lesson [{}] was deleted", lesson.getId());
 	}
 
-	private <T> T findAndMap(long lessonId, Function<Lesson, T> map) {
-		return lessonRepository.findById(lessonId)
+	@Transactional(readOnly = true)
+	public Page<CourseUserDto> getTeachers(long courseId, Pagination<TeacherSortField> pagination) {
+		return courseRepository.getTeachersByCourse(findCourse(courseId), paginationMapper.map(pagination))
+				.map(userMapper::mapCourseUser);
+	}
+
+	@Transactional
+	public void addTeacher(long courseId, long teacherId) {
+		Course course = findCourse(courseId);
+
+		User user = findUser(teacherId);
+		if (user.getRole() != UserRole.TEACHER) {
+			throw new RestfullBadRequestException("User is not a teacher");
+		}
+
+		if (course.getTeachers().contains(user)) {
+			throw new RestfullBadRequestException("Teacher is already in the course");
+		}
+
+		course.getTeachers().add(user);
+
+		log.debug("Teacher [{}] was added to course [{}]", teacherId, courseId);
+	}
+
+	@Transactional
+	public void removeTeacher(long courseId, long teacherId) {
+		Course course = findCourse(courseId);
+		User user = findUser(teacherId);
+
+		if (!course.getTeachers().remove(user)) {
+			throw new RestfullNotFoundException("Teacher not found in the course");
+		}
+
+		log.debug("Teacher [{}] was removed from course [{}]", teacherId, courseId);
+	}
+
+	@Transactional(readOnly = true)
+	public Page<CourseUserDto> getStudents(long courseId, Pagination<StudentSortField> pagination) {
+		return courseRepository.getStudentsByCourse(findCourse(courseId), paginationMapper.map(pagination))
+				.map(userMapper::mapCourseUser);
+	}
+
+	@Transactional
+	public void addStudent(long courseId, long studentId) {
+		Course course = findCourse(courseId);
+		User user = findUser(studentId);
+
+		if (user.getRole() != UserRole.STUDENT) {
+			throw new RestfullBadRequestException("User is not a student");
+		}
+
+		if (course.getStudents().contains(user)) {
+			throw new RestfullBadRequestException("Student is already in the course");
+		}
+
+		course.getStudents().add(user);
+
+		log.debug("Student [{}] was added to course [{}]", studentId, courseId);
+	}
+
+	@Transactional
+	public void removeStudent(long courseId, long studentId) {
+		Course course = findCourse(courseId);
+		User user = findUser(studentId);
+
+		if (!course.getStudents().remove(user)) {
+			throw new RestfullBadRequestException("Student not found in the course");
+		}
+
+		log.debug("Student [{}] was removed from course [{}]", studentId, courseId);
+	}
+
+
+	private Course findCourse(long courseId) {
+		return findAndMapCourse(courseId, Function.identity());
+	}
+
+	private <T> T findAndMapCourse(long courseId, Function<Course, T> map) {
+		return courseRepository.findById(courseId)
 				.map(map)
+				.orElseThrow(() -> new RestfullNotFoundException("Course not found"));
+	}
+
+	private Lesson findLesson(long courseId, long lessonId) {
+		return lessonRepository.findByIdAndCourseId(lessonId, courseId)
 				.orElseThrow(() -> new RestfullNotFoundException("Lesson not found"));
 	}
 
-//	@Transactional(readOnly = true)
-//	public Page<UserOutDto> getTeachersByCourse(long courseId, Pagination<CourseSortField> pagination) {
-//		return userRepository. findAll(paginationMapper.map(pagination)).map(courseMapper::map);
-//	}
+	private User findUser(long userId) {
+		return userRepository.findById(userId)
+				.orElseThrow(() -> new RestfullNotFoundException("User not found"));
+	}
+
 }

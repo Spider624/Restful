@@ -64,9 +64,10 @@ public class UserService {
 	@Transactional
 	public void updateUser(long userId, UserUpdateInDto dto) {
 		User user = findAndMap(userId, Function.identity());
-		if (userRepository.existsByLogin(dto.getLogin())) {
+		if (!user.getLogin().equals(dto.getLogin()) && userRepository.existsByLogin(dto.getLogin())) {
 			throw new RestfullBadRequestException("Login is already busy");
 		}
+
 		userMapper.update(user, dto);
 
 		log.debug("User [{}] was updated", user.getLogin());

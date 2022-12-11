@@ -7,28 +7,15 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",
+		uses = UserMapper.class)
 public abstract class LessonMapper {
 
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "uuid", ignore = true)
+	@Mapping(target = "teacher", ignore = true)
 	public abstract void update(@MappingTarget Lesson target, LessonInDto source);
 
 	public abstract LessonOutDto map(Lesson lesson);
-
-//	public Long map(User user) {
-//		return user.getId();
-//	}
-//
-//	@Mapping(target = "users", source = "users")
-//	public abstract List<User> map(Long teacherId);
-
-//	User INSTANSE = Mappers.getMapper()
-//	@Bean
-//	public ObjectMapper jsonObjectMapper() {
-//		return Jackson2ObjectMapperBuilder.json()
-//				.modules(new JavaTimeModule())
-//				.build();
-//	}
 
 }

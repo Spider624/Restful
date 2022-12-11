@@ -1,18 +1,20 @@
-//package edu.school21.restfull.serialization;
-//
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-//
-//public class LocalTimeSerializer {
-//
-//    @Bean
-//    public ObjectMapper jsonObjectMapper() {
-//        return Jackson2ObjectMapperBuilder.json()
-//                .modules(new JavaTimeModule())
-//                .build();
-//    }
-//
-//    //ISO_LOCAL_TIME = (new DateTimeFormatterBuilder()).appendValue(ChronoField.HOUR_OF_DAY, 2).appendLiteral(':').appendValue(ChronoField.MINUTE_OF_HOUR, 2).optionalStart().appendLiteral(':').appendValue(ChronoField.SECOND_OF_MINUTE, 2).optionalStart().appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).toFormatter(ResolverStyle.STRICT, (Chronology)null);
-//}
+package edu.school21.restfull.serialization;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+
+import java.io.IOException;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
+public class LocalTimeSerializer extends JsonSerializer<LocalTime> {
+
+	public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
+
+	@Override
+	public void serialize(LocalTime localTime, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+		jsonGenerator.writeString(localTime.format(FORMATTER));
+	}
+
+}

@@ -1,7 +1,7 @@
 package edu.school21.restfull.dto.course;
 
-import edu.school21.restfull.model.Lesson;
-import edu.school21.restfull.model.User;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import edu.school21.restfull.serialization.LocalDateSerializer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Value;
 import lombok.experimental.NonFinal;
@@ -15,21 +15,23 @@ import java.time.LocalDate;
 @NonFinal
 public abstract class CourseBaseDto {
 
-	@ApiModelProperty(value = "StartDate", required = true)
-	@NotNull(message = "No start date selected")
+	@ApiModelProperty(value = "Start date", required = true)
+	@NotNull(message = "Start date is not defined")
+	@JsonSerialize(using = LocalDateSerializer.class)
 	LocalDate startDate;
 
-	@ApiModelProperty(value = "EndDate", required = true)
-	@NotNull(message = "No end date selected")
+	@ApiModelProperty(value = "End date", required = true)
+	@NotNull(message = "End date is not defined")
+	@JsonSerialize(using = LocalDateSerializer.class)
 	LocalDate endDate;
 
 	@ApiModelProperty(value = "Name", required = true)
-	@NotEmpty(message = "Name of course isn't defined")
+	@NotEmpty(message = "Name is not defined")
 	@Size(message = "Name Of Course incorrect", min = 1, max = 255)
 	String name;
 
 	@ApiModelProperty(value = "Description", required = true)
-	@NotNull(message = "Description isn't defined")
+	@NotNull(message = "Description is not defined")
 	String description;
 
 }

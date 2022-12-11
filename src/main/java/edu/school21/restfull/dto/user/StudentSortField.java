@@ -1,4 +1,4 @@
-package edu.school21.restfull.dto.course;
+package edu.school21.restfull.dto.user;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import edu.school21.restfull.dto.pagination.SortField;
@@ -7,12 +7,11 @@ import lombok.AllArgsConstructor;
 
 @JsonDeserialize(using = SortFieldDeserializer.class)
 @AllArgsConstructor
-public enum CourseSortField implements SortField {
+public enum StudentSortField implements SortField {
 
-	ID("id"),
-	START_DATE("startDate"),
-	END_DATE("endDate"),
-	NAME("name");
+	ID("student.id"),
+	FIRST_NAME("student.firstName"),
+	LAST_NAME("student.lastName");
 
 	private final String dataFieldName;
 

@@ -1,5 +1,6 @@
 package edu.school21.restfull.model;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,20 +27,25 @@ public class Course extends AbstractModel {
 	@Column(nullable = false, length = NAME_COURSE_LENGTH, unique = true)
 	private String name;
 
-	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "teachers_courses", joinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id"),
-			inverseJoinColumns = @JoinColumn(name = "teacher_id", referencedColumnName = "id"))
-	private List<User> teachers = new ArrayList<>();
-
-	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "students_courses", joinColumns = @JoinColumn(name = "course_id", referencedColumnName = "id"),
-			inverseJoinColumns = @JoinColumn(name = "student_id", referencedColumnName = "id"))
-	private List<User> students = new ArrayList<>();
-
-	@Column(nullable = true, length = DESCRIPTION_LENGTH)
+	@Column(nullable = false, length = DESCRIPTION_LENGTH)
 	private String description;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name="course_id", nullable = true, updatable = true)
+	@Setter(AccessLevel.NONE)
+	@ManyToMany
+	@JoinTable(name = "teachers_courses",
+			joinColumns = @JoinColumn(name = "course_id", nullable = false, updatable = false),
+			inverseJoinColumns = @JoinColumn(name = "teacher_id", nullable = false, updatable = false))
+	private List<User> teachers = new ArrayList<>();
+
+	@Setter(AccessLevel.NONE)
+	@ManyToMany
+	@JoinTable(name = "students_courses",
+			joinColumns = @JoinColumn(name = "course_id", nullable = false, updatable = false),
+			inverseJoinColumns = @JoinColumn(name = "student_id", nullable = false, updatable = false))
+	private List<User> students = new ArrayList<>();
+
+	@Setter(AccessLevel.NONE)
+	@OneToMany(mappedBy = "course", orphanRemoval = true)
 	private List<Lesson> lessons = new ArrayList<>();
+
 }

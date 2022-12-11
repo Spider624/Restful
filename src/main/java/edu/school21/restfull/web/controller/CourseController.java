@@ -6,7 +6,10 @@ import edu.school21.restfull.dto.lesson.LessonOutDto;
 import edu.school21.restfull.dto.lesson.LessonSortField;
 import edu.school21.restfull.dto.pagination.Pagination;
 import edu.school21.restfull.dto.course.*;
-import edu.school21.restfull.dto.user.UserOutDto;
+import edu.school21.restfull.dto.user.CourseUserDto;
+import edu.school21.restfull.dto.user.StudentSortField;
+import edu.school21.restfull.dto.user.TeacherSortField;
+import edu.school21.restfull.dto.user.UserSortField;
 import edu.school21.restfull.service.CourseService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,25 +25,22 @@ public class CourseController {
 	@Autowired
 	private CourseService courseService;
 
-//	@Autowired
-//	private CourseService lessonService;
-
 	@ApiOperation("Create course")
 	@PostMapping
 	public CourseCreateOutDto createCourse(@RequestBody @Valid CourseInDto dto) {
 		return courseService.createCourse(dto);
 	}
 
-	@ApiOperation("Get all courses with pagination and sorting")
-	@GetMapping
-	public Page<CourseOutDto> getCourses(Pagination<CourseSortField> pagination) {
-		return courseService.getCourses(pagination);
-	}
-
 	@ApiOperation("Get course info")
 	@GetMapping("{courseId}")
 	public CourseOutDto getCourse(@PathVariable("courseId") long courseId) {
 		return courseService.getCourse(courseId);
+	}
+
+	@ApiOperation("Get all courses with pagination and sorting")
+	@GetMapping
+	public Page<CourseOutDto> getCourses(Pagination<CourseSortField> pagination) {
+		return courseService.getCourses(pagination);
 	}
 
 	@ApiOperation("Update course")
@@ -55,8 +55,6 @@ public class CourseController {
 		courseService.deleteCourse(courseId);
 	}
 
-
-
 	@ApiOperation("Create lesson")
 	@PostMapping("{courseId}/lessons")
 	public LessonCreateOutDto createLesson(@PathVariable("courseId") long courseId, @RequestBody @Valid LessonInDto dto) {
@@ -65,30 +63,32 @@ public class CourseController {
 
 	@ApiOperation("Get all lessons with pagination and sorting")
 	@GetMapping("{courseId}/lessons")
-	public Page<LessonOutDto> getLessons(Pagination<LessonSortField> pagination) {
-		return courseService.getLessons(pagination);
-	}
-
-	@ApiOperation("Get lesson info")
-	@GetMapping("{courseId}/lessons/{lessonId}")
-	public LessonOutDto getLesson(@PathVariable("lessonId") long lessonId) {
-		return courseService.getLesson(lessonId);
+	public Page<LessonOutDto> getLessons(@PathVariable("courseId") long courseId, Pagination<LessonSortField> pagination) {
+		return courseService.getLessons(courseId, pagination);
 	}
 
 	@ApiOperation("Update lesson")
 	@PutMapping("{courseId}/lessons/{lessonId}")
-	public void updateLesson(@PathVariable("lessonId") long lessonId, @RequestBody @Valid LessonInDto dto) {
-		courseService.updateLesson(lessonId, dto);
+	public void updateLesson(@PathVariable("courseId") long courseId,
+							 @PathVariable("lessonId") long lessonId,
+							 @RequestBody @Valid LessonInDto dto) {
+		courseService.updateLesson(courseId, lessonId, dto);
 	}
 
 	@ApiOperation("Delete lesson")
 	@DeleteMapping("{courseId}/lessons/{lessonId}")
-	public void deleteLesson(@PathVariable("lessonId") long lessonId) {
-		courseService.deleteLesson(lessonId);
+	public void deleteLesson(@PathVariable("courseId") long courseId, @PathVariable("lessonId") long lessonId) {
+		courseService.deleteLesson(courseId, lessonId);
+	}
+
+	@ApiOperation("Get course teachers")
+	@GetMapping("{courseId}/teachers")
+	public Page<CourseUserDto> getTeachers(@PathVariable("courseId") long courseId, Pagination<TeacherSortField> pagination) {
+		return courseService.getTeachers(courseId, pagination);
 	}
 
 	@ApiOperation("Add teacher to course")
-	@PutMapping("{courseId}/teachers/{teacherId}")
+	@PostMapping("{courseId}/teachers/{teacherId}")
 	public void addTeacher(@PathVariable("courseId") long courseId, @PathVariable("teacherId") long teacherId){
 		courseService.addTeacher(courseId, teacherId);
 	}
@@ -99,14 +99,14 @@ public class CourseController {
 		courseService.removeTeacher(courseId, teacherId);
 	}
 
-//	@ApiOperation("Get all courses with pagination and sorting")
-//	@GetMapping("{courseId}/teachers/")
-//	public Page<UserOutDto>  getTeachersByCourse(@PathVariable("courseId") long courseId, Pagination<CourseSortField> pagination) {
-//		return courseService.getTeachersByCourse(courseId, pagination);
-//	}
+	@ApiOperation("Get course students")
+	@GetMapping("{courseId}/students")
+	public Page<CourseUserDto> getStudents(@PathVariable("courseId") long courseId, Pagination<StudentSortField> pagination) {
+		return courseService.getStudents(courseId, pagination);
+	}
 
 	@ApiOperation("Add student to course")
-	@PutMapping("{courseId}/students/{studentId}")
+	@PostMapping("{courseId}/students/{studentId}")
 	public void addStudent(@PathVariable("courseId") long courseId, @PathVariable("studentId") long studentId){
 		courseService.addStudent(courseId, studentId);
 	}
@@ -116,7 +116,5 @@ public class CourseController {
 	public void removeStudent(@PathVariable("courseId") long courseId, @PathVariable("studentId") long studentId){
 		courseService.removeStudent(courseId, studentId);
 	}
-
-
 
 }
