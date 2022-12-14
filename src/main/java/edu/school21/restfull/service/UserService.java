@@ -1,5 +1,6 @@
 package edu.school21.restfull.service;
 
+import edu.school21.restfull.dto.pagination.ContentPage;
 import edu.school21.restfull.dto.pagination.Pagination;
 import edu.school21.restfull.dto.user.UserCreateInDto;
 import edu.school21.restfull.dto.user.UserCreateOutDto;
@@ -52,8 +53,9 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<UserOutDto> getUsers(Pagination<UserSortField> pagination) {
-		return userRepository.findAll(paginationMapper.map(pagination)).map(userMapper::map);
+	public ContentPage<UserOutDto> getUsers(Pagination<UserSortField> pagination) {
+		Page<UserOutDto> page = userRepository.findAll(paginationMapper.map(pagination)).map(userMapper::map);
+		return paginationMapper.map(page);
 	}
 
 	@Transactional(readOnly = true)

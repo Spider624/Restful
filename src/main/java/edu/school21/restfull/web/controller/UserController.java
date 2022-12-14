@@ -1,5 +1,6 @@
 package edu.school21.restfull.web.controller;
 
+import edu.school21.restfull.dto.pagination.ContentPage;
 import edu.school21.restfull.dto.pagination.Pagination;
 import edu.school21.restfull.dto.user.UserCreateInDto;
 import edu.school21.restfull.dto.user.UserCreateOutDto;
@@ -9,7 +10,7 @@ import edu.school21.restfull.dto.user.UserUpdateInDto;
 import edu.school21.restfull.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+@Validated
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -36,7 +38,7 @@ public class UserController {
 
 	@ApiOperation("Get all users with pagination and sorting")
 	@GetMapping
-	public Page<UserOutDto> getUsers(Pagination<UserSortField> pagination) {
+	public ContentPage<UserOutDto> getUsers(@Valid Pagination<UserSortField> pagination) {
 		return userService.getUsers(pagination);
 	}
 
