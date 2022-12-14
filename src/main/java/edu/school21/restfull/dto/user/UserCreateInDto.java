@@ -20,7 +20,7 @@ public class UserCreateInDto extends UserBaseInDto {
 
 	@ApiModelProperty(value = "Password", required = true)
 	@NotNull(message = "Password isn't defined")
-	@Size(message = "Password incorrect", min = 5)
+	@Size(message = "Password too short", min = 5)
 	String password;
 
 	@JsonCreator

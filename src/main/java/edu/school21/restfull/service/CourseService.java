@@ -4,12 +4,12 @@ import edu.school21.restfull.dto.lesson.LessonCreateOutDto;
 import edu.school21.restfull.dto.lesson.LessonInDto;
 import edu.school21.restfull.dto.lesson.LessonOutDto;
 import edu.school21.restfull.dto.lesson.LessonSortField;
+import edu.school21.restfull.dto.pagination.ContentPage;
 import edu.school21.restfull.dto.pagination.Pagination;
 import edu.school21.restfull.dto.course.*;
 import edu.school21.restfull.dto.user.CourseUserDto;
 import edu.school21.restfull.dto.user.StudentSortField;
 import edu.school21.restfull.dto.user.TeacherSortField;
-import edu.school21.restfull.dto.user.UserSortField;
 import edu.school21.restfull.exception.RestfullBadRequestException;
 import edu.school21.restfull.exception.RestfullNotFoundException;
 import edu.school21.restfull.model.Course;
@@ -29,16 +29,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.function.Function;
 
 @Slf4j
 @Service
 public class CourseService {
-
-	@PersistenceContext
-	private EntityManager entityManager;
 
 	@Autowired
 	private CourseRepository courseRepository;
@@ -77,8 +73,9 @@ public class CourseService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<CourseOutDto> getCourses(Pagination<CourseSortField> pagination) {
-		return courseRepository.findAll(paginationMapper.map(pagination)).map(courseMapper::map);
+	public ContentPage<CourseOutDto> getCourses(Pagination<CourseSortField> pagination) {
+		Page<CourseOutDto> page = courseRepository.findAll(paginationMapper.map(pagination)).map(courseMapper::map);
+		return paginationMapper.map(page);
 	}
 
 	@Transactional(readOnly = true)
@@ -111,9 +108,11 @@ public class CourseService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<LessonOutDto> getLessons(long courseId, Pagination<LessonSortField> pagination) {
-		return lessonRepository.findAllByCourse(findCourse(courseId), paginationMapper.map(pagination))
+	public ContentPage<LessonOutDto> getLessons(long courseId, Pagination<LessonSortField> pagination) {
+		Page<LessonOutDto> page = lessonRepository.findAllByCourse(findCourse(courseId), paginationMapper.map(pagination))
 				.map(lessonMapper::map);
+
+		return paginationMapper.map(page);
 	}
 
 	@Transactional
@@ -184,9 +183,11 @@ public class CourseService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<CourseUserDto> getTeachers(long courseId, Pagination<TeacherSortField> pagination) {
-		return courseRepository.getTeachersByCourse(findCourse(courseId), paginationMapper.map(pagination))
+	public ContentPage<CourseUserDto> getTeachers(long courseId, Pagination<TeacherSortField> pagination) {
+		Page<CourseUserDto> page = courseRepository.getTeachersByCourse(findCourse(courseId), paginationMapper.map(pagination))
 				.map(userMapper::mapCourseUser);
+
+		return paginationMapper.map(page);
 	}
 
 	@Transactional
@@ -220,9 +221,11 @@ public class CourseService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<CourseUserDto> getStudents(long courseId, Pagination<StudentSortField> pagination) {
-		return courseRepository.getStudentsByCourse(findCourse(courseId), paginationMapper.map(pagination))
+	public ContentPage<CourseUserDto> getStudents(long courseId, Pagination<StudentSortField> pagination) {
+		Page<CourseUserDto> page = courseRepository.getStudentsByCourse(findCourse(courseId), paginationMapper.map(pagination))
 				.map(userMapper::mapCourseUser);
+
+		return paginationMapper.map(page);
 	}
 
 	@Transactional

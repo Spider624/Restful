@@ -4,16 +4,15 @@ import edu.school21.restfull.dto.lesson.LessonCreateOutDto;
 import edu.school21.restfull.dto.lesson.LessonInDto;
 import edu.school21.restfull.dto.lesson.LessonOutDto;
 import edu.school21.restfull.dto.lesson.LessonSortField;
+import edu.school21.restfull.dto.pagination.ContentPage;
 import edu.school21.restfull.dto.pagination.Pagination;
 import edu.school21.restfull.dto.course.*;
 import edu.school21.restfull.dto.user.CourseUserDto;
 import edu.school21.restfull.dto.user.StudentSortField;
 import edu.school21.restfull.dto.user.TeacherSortField;
-import edu.school21.restfull.dto.user.UserSortField;
 import edu.school21.restfull.service.CourseService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -39,7 +38,7 @@ public class CourseController {
 
 	@ApiOperation("Get all courses with pagination and sorting")
 	@GetMapping
-	public Page<CourseOutDto> getCourses(Pagination<CourseSortField> pagination) {
+	public ContentPage<CourseOutDto> getCourses(Pagination<CourseSortField> pagination) {
 		return courseService.getCourses(pagination);
 	}
 
@@ -63,7 +62,7 @@ public class CourseController {
 
 	@ApiOperation("Get all lessons with pagination and sorting")
 	@GetMapping("{courseId}/lessons")
-	public Page<LessonOutDto> getLessons(@PathVariable("courseId") long courseId, Pagination<LessonSortField> pagination) {
+	public ContentPage<LessonOutDto> getLessons(@PathVariable("courseId") long courseId, Pagination<LessonSortField> pagination) {
 		return courseService.getLessons(courseId, pagination);
 	}
 
@@ -83,7 +82,7 @@ public class CourseController {
 
 	@ApiOperation("Get course teachers")
 	@GetMapping("{courseId}/teachers")
-	public Page<CourseUserDto> getTeachers(@PathVariable("courseId") long courseId, Pagination<TeacherSortField> pagination) {
+	public ContentPage<CourseUserDto> getTeachers(@PathVariable("courseId") long courseId, Pagination<TeacherSortField> pagination) {
 		return courseService.getTeachers(courseId, pagination);
 	}
 
@@ -101,7 +100,7 @@ public class CourseController {
 
 	@ApiOperation("Get course students")
 	@GetMapping("{courseId}/students")
-	public Page<CourseUserDto> getStudents(@PathVariable("courseId") long courseId, Pagination<StudentSortField> pagination) {
+	public ContentPage<CourseUserDto> getStudents(@PathVariable("courseId") long courseId, Pagination<StudentSortField> pagination) {
 		return courseService.getStudents(courseId, pagination);
 	}
 

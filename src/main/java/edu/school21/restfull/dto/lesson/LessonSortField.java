@@ -27,4 +27,9 @@ public enum LessonSortField implements SortField {
 		return name();
 	}
 
+	@Override
+	public Boolean isDefault() {
+		return this == ID;
+	}
+
 }

@@ -6,4 +6,6 @@ public interface SortField {
 
 	String getDtoFieldName();
 
+	Boolean isDefault();
+
 }
