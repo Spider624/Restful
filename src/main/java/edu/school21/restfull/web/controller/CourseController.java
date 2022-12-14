@@ -10,9 +10,11 @@ import edu.school21.restfull.dto.course.*;
 import edu.school21.restfull.dto.user.CourseUserDto;
 import edu.school21.restfull.dto.user.StudentSortField;
 import edu.school21.restfull.dto.user.TeacherSortField;
+import edu.school21.restfull.model.type.UserRole;
 import edu.school21.restfull.service.CourseService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,6 +27,7 @@ public class CourseController {
 	private CourseService courseService;
 
 	@ApiOperation("Create course")
+	@Secured(value = UserRole.Authorities.ADMIN)
 	@PostMapping
 	public CourseCreateOutDto createCourse(@RequestBody @Valid CourseInDto dto) {
 		return courseService.createCourse(dto);
@@ -43,18 +46,21 @@ public class CourseController {
 	}
 
 	@ApiOperation("Update course")
+	@Secured(value = UserRole.Authorities.ADMIN)
 	@PutMapping("{courseId}")
 	public void updateCourse(@PathVariable("courseId") long courseId, @RequestBody @Valid CourseInDto dto) {
 		courseService.updateCourse(courseId, dto);
 	}
 
 	@ApiOperation("Delete course")
+	@Secured(value = UserRole.Authorities.ADMIN)
 	@DeleteMapping("{courseId}")
 	public void deleteCourse(@PathVariable("courseId") long courseId) {
 		courseService.deleteCourse(courseId);
 	}
 
 	@ApiOperation("Create lesson")
+	@Secured(value = UserRole.Authorities.ADMIN)
 	@PostMapping("{courseId}/lessons")
 	public LessonCreateOutDto createLesson(@PathVariable("courseId") long courseId, @RequestBody @Valid LessonInDto dto) {
 		return courseService.createLesson(courseId, dto);
@@ -67,6 +73,7 @@ public class CourseController {
 	}
 
 	@ApiOperation("Update lesson")
+	@Secured(value = UserRole.Authorities.ADMIN)
 	@PutMapping("{courseId}/lessons/{lessonId}")
 	public void updateLesson(@PathVariable("courseId") long courseId,
 							 @PathVariable("lessonId") long lessonId,
@@ -75,6 +82,7 @@ public class CourseController {
 	}
 
 	@ApiOperation("Delete lesson")
+	@Secured(value = UserRole.Authorities.ADMIN)
 	@DeleteMapping("{courseId}/lessons/{lessonId}")
 	public void deleteLesson(@PathVariable("courseId") long courseId, @PathVariable("lessonId") long lessonId) {
 		courseService.deleteLesson(courseId, lessonId);
@@ -87,12 +95,14 @@ public class CourseController {
 	}
 
 	@ApiOperation("Add teacher to course")
+	@Secured(value = UserRole.Authorities.ADMIN)
 	@PostMapping("{courseId}/teachers/{teacherId}")
 	public void addTeacher(@PathVariable("courseId") long courseId, @PathVariable("teacherId") long teacherId){
 		courseService.addTeacher(courseId, teacherId);
 	}
 
 	@ApiOperation("Remove teacher from course")
+	@Secured(value = UserRole.Authorities.ADMIN)
 	@DeleteMapping("{courseId}/teachers/{teacherId}")
 	public void removeTeacher(@PathVariable("courseId") long courseId, @PathVariable("teacherId") long teacherId){
 		courseService.removeTeacher(courseId, teacherId);
@@ -105,12 +115,14 @@ public class CourseController {
 	}
 
 	@ApiOperation("Add student to course")
+	@Secured(value = UserRole.Authorities.ADMIN)
 	@PostMapping("{courseId}/students/{studentId}")
 	public void addStudent(@PathVariable("courseId") long courseId, @PathVariable("studentId") long studentId){
 		courseService.addStudent(courseId, studentId);
 	}
 
 	@ApiOperation("Remove student from course")
+	@Secured(value = UserRole.Authorities.ADMIN)
 	@DeleteMapping("{courseId}/students/{studentId}")
 	public void removeStudent(@PathVariable("courseId") long courseId, @PathVariable("studentId") long studentId){
 		courseService.removeStudent(courseId, studentId);

@@ -44,7 +44,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		// Добавляем все префиксы урл, которые нужно авторизовать с помощью jwt
 		RequestMatcher jwtAuthenticationMatcher = new AndRequestMatcher(
-				new AntPathRequestMatcher("/users/**")
+				new AntPathRequestMatcher("/users/**"),
+				new AntPathRequestMatcher("/course/**")
 		);
 
 		http

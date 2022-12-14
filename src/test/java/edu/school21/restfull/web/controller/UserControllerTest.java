@@ -12,6 +12,7 @@ import edu.school21.restfull.model.User;
 import edu.school21.restfull.model.type.UserRole;
 import edu.school21.restfull.repository.UserRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MvcResult;
@@ -46,10 +47,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 public class UserControllerTest extends AbstractTest {
 
+	private User admin;
+
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+
+	@Before
+	public void init() {
+		admin = createUser("administrator", "Administrator", "Administrator", UserRole.ADMIN);
+		authorize(admin.getId());
+	}
 
 	@Test
 	public void createUser_Success() throws Exception {
@@ -64,10 +73,11 @@ public class UserControllerTest extends AbstractTest {
 		UserCreateOutDto createOutDto = toObject(result, UserCreateOutDto.class);
 		assertNotNull(createOutDto);
 
-		List<User> users = userRepository.findAll();
-		assertEquals(1, users.size());
+		User user = userRepository.findAll().stream()
+				.filter(u -> u.getId().equals(createOutDto.getId()))
+				.findFirst()
+				.orElseThrow(AssertionError::new);
 
-		User user = users.get(0);
 		assertEquals(createOutDto.getId(), user.getId());
 		assertUser(user, createInDto);
 	}
@@ -115,15 +125,20 @@ public class UserControllerTest extends AbstractTest {
 	public void updateUser_Success() throws Exception {
 		// Create user
 		UserCreateInDto createInDto = new UserCreateInDto("firstName", "lastName", "login", UserRole.ADMIN, "12345");
-		mockMvc.perform(post("/users")
+		MvcResult result = mockMvc.perform(post("/users")
 						.content(toJsonBytes(createInDto))
 						.contentType(APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andReturn();
 
-		List<User> users = userRepository.findAll();
-		assertEquals(1, users.size());
-		User user = users.get(0);
+		UserCreateOutDto createOutDto = toObject(result, UserCreateOutDto.class);
+		assertNotNull(createOutDto);
+
+		User user = userRepository.findAll().stream()
+				.filter(u -> u.getId().equals(createOutDto.getId()))
+				.findFirst()
+				.orElseThrow(AssertionError::new);
+
 		assertUser(user, createInDto);
 
 		// Update user
@@ -212,7 +227,6 @@ public class UserControllerTest extends AbstractTest {
 				.andReturn();
 
 		List<User> users = userRepository.findAll();
-		assertEquals(1, users.size());
 		assertFalse(users.contains(user));
 		assertTrue(users.contains(otherUser));
 	}
@@ -227,9 +241,13 @@ public class UserControllerTest extends AbstractTest {
 
 	@Test
 	public void getUsers_Success() throws Exception {
+		userRepository.deleteAll();
+
 		User firstUser = createUser("lupin", "Anton", "Belov", UserRole.STUDENT);
 		User secondUser = createUser("zupin", "Gigi", "Hadid", UserRole.ADMIN);
 		User thirdUser = createUser("aupin", "Zendaya", "Furiya", UserRole.TEACHER);
+
+		authorize(firstUser.getId());
 
 		Map<UserSortField, List<User>> ascOrderBySort = new HashMap<>();
 		ascOrderBySort.put(UserSortField.ID, Arrays.asList(firstUser, secondUser, thirdUser));
