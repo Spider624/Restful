@@ -11,8 +11,8 @@ import edu.school21.restfull.dto.user.UserUpdateInDto;
 import edu.school21.restfull.model.User;
 import edu.school21.restfull.model.type.UserRole;
 import edu.school21.restfull.repository.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MvcResult;
@@ -54,7 +54,7 @@ public class UserControllerTest extends AbstractTest {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	@Before
+	@BeforeEach
 	public void init() {
 		admin = createUser("administrator", "Administrator", "Administrator", UserRole.ADMIN);
 		authorize(admin.getId());
