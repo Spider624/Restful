@@ -11,7 +11,7 @@ import edu.school21.restfull.dto.user.UserUpdateInDto;
 import edu.school21.restfull.model.User;
 import edu.school21.restfull.model.type.UserRole;
 import edu.school21.restfull.repository.UserRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MvcResult;

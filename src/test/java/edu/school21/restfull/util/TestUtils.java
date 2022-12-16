@@ -1,7 +1,5 @@
 package edu.school21.restfull.util;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.school21.restfull.dto.pagination.ContentPage;
 import lombok.AccessLevel;

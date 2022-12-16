@@ -25,7 +25,7 @@ public class PaginationMapper {
 	}
 
 	public <T> ContentPage<T> map(Page<T> page) {
-		return new ContentPage<>(page.getContent(), page.getNumber(), page.getSize(), page.hasNext());
+		return new ContentPage<>(page.getContent(), page.getTotalElements(), page.getSize(), page.getNumber(), page.getTotalPages());
 	}
 
 }

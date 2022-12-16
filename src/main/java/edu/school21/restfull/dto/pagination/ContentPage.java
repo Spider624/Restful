@@ -15,24 +15,29 @@ public class ContentPage<T> {
 	@ApiModelProperty(value = "Page content", required = true)
 	List<T> content;
 
+	@ApiModelProperty(value = "Total elements", required = true)
+	Long totalElements;
+
 	@ApiModelProperty(value = "Size of page", required = true)
-	Integer size;
+	Integer pageSize;
 
 	@ApiModelProperty(value = "Number of page", required = true)
-	Integer number;
+	Integer pageNumber;
 
-	@ApiModelProperty(value = "Has next page", required = true)
-	Boolean hasNext;
+	@ApiModelProperty(value = "Total pages number", required = true)
+	Integer totalPageNumber;
 
 	@JsonCreator
 	public ContentPage(@JsonProperty("content") List<T> content,
-					   @JsonProperty("size") Integer size,
-					   @JsonProperty("number") Integer number,
-					   @JsonProperty("hasNext") Boolean hasNext) {
+					   @JsonProperty("totalElements") Long totalElements,
+					   @JsonProperty("pageSize") Integer pageSize,
+					   @JsonProperty("pageNumber") Integer pageNumber,
+					   @JsonProperty("totalPageNumber") Integer totalPageNumber) {
 		this.content = content;
-		this.size = size;
-		this.number = number;
-		this.hasNext = hasNext;
+		this.totalElements = totalElements;
+		this.pageSize = pageSize;
+		this.pageNumber = pageNumber;
+		this.totalPageNumber = totalPageNumber;
 	}
 
 }
