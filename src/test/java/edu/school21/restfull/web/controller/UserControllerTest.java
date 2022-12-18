@@ -14,6 +14,7 @@ import edu.school21.restfull.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,7 +58,6 @@ public class UserControllerTest extends AbstractTest {
 	@BeforeEach
 	public void init() {
 		admin = createUser("administrator", "Administrator", "Administrator", UserRole.ADMIN);
-		authorize(admin.getId());
 	}
 
 	@Test
@@ -65,6 +65,7 @@ public class UserControllerTest extends AbstractTest {
 		UserCreateInDto createInDto = new UserCreateInDto("firstName", "lastName", "login", UserRole.ADMIN, "12345");
 
 		MvcResult result = mockMvc.perform(post("/users")
+						.header(HttpHeaders.AUTHORIZATION, jwtAuthorizationHeader(admin.getId()))
 						.content(toJsonBytes(createInDto))
 						.contentType(APPLICATION_JSON))
 				.andExpect(status().isOk())
@@ -89,6 +90,7 @@ public class UserControllerTest extends AbstractTest {
 		UserCreateInDto createInDto = new UserCreateInDto("firstName1", "lastName1", "login", UserRole.ADMIN, "12345");
 
 		mockMvc.perform(post("/users")
+						.header(HttpHeaders.AUTHORIZATION, jwtAuthorizationHeader(admin.getId()))
 						.content(toJsonBytes(createInDto))
 						.contentType(APPLICATION_JSON))
 				.andExpect(status().isBadRequest())
@@ -101,6 +103,7 @@ public class UserControllerTest extends AbstractTest {
 		UserCreateInDto createInDto = new UserCreateInDto(null, null, null, null, null);
 
 		mockMvc.perform(post("/users")
+						.header(HttpHeaders.AUTHORIZATION, jwtAuthorizationHeader(admin.getId()))
 						.content(toJsonBytes(createInDto))
 						.contentType(APPLICATION_JSON))
 				.andExpect(status().isBadRequest())
@@ -114,6 +117,7 @@ public class UserControllerTest extends AbstractTest {
 		createInDto = new UserCreateInDto("firstName1", "lastName1", "login", UserRole.ADMIN, "123");
 
 		mockMvc.perform(post("/users")
+						.header(HttpHeaders.AUTHORIZATION, jwtAuthorizationHeader(admin.getId()))
 						.content(toJsonBytes(createInDto))
 						.contentType(APPLICATION_JSON))
 				.andExpect(status().isBadRequest())
@@ -126,6 +130,7 @@ public class UserControllerTest extends AbstractTest {
 		// Create user
 		UserCreateInDto createInDto = new UserCreateInDto("firstName", "lastName", "login", UserRole.ADMIN, "12345");
 		MvcResult result = mockMvc.perform(post("/users")
+						.header(HttpHeaders.AUTHORIZATION, jwtAuthorizationHeader(admin.getId()))
 						.content(toJsonBytes(createInDto))
 						.contentType(APPLICATION_JSON))
 				.andExpect(status().isOk())
@@ -144,6 +149,7 @@ public class UserControllerTest extends AbstractTest {
 		// Update user
 		UserUpdateInDto updateInDto = new UserUpdateInDto("newFirstName", "newLastName", "newLogin", UserRole.TEACHER);
 		mockMvc.perform(put("/users/{userId}", user.getId())
+						.header(HttpHeaders.AUTHORIZATION, jwtAuthorizationHeader(admin.getId()))
 						.content(toJsonBytes(updateInDto))
 						.contentType(APPLICATION_JSON))
 				.andExpect(status().isOk())
@@ -158,6 +164,7 @@ public class UserControllerTest extends AbstractTest {
 		UserUpdateInDto updateInDto = new UserUpdateInDto("newFirstName", "newLastName", "newLogin", UserRole.TEACHER);
 
 		mockMvc.perform(put("/users/{userId}", -1)
+						.header(HttpHeaders.AUTHORIZATION, jwtAuthorizationHeader(admin.getId()))
 						.content(toJsonBytes(updateInDto))
 						.contentType(APPLICATION_JSON))
 				.andExpect(status().isNotFound())
@@ -173,6 +180,7 @@ public class UserControllerTest extends AbstractTest {
 		// Try update user login to user2's login
 		UserUpdateInDto updateInDto = new UserUpdateInDto("firstName", "lastName", user2.getLogin(), UserRole.ADMIN);
 		mockMvc.perform(put("/users/{userId}", user1.getId())
+						.header(HttpHeaders.AUTHORIZATION, jwtAuthorizationHeader(admin.getId()))
 						.content(toJsonBytes(updateInDto))
 						.contentType(APPLICATION_JSON))
 				.andExpect(status().isBadRequest())
@@ -185,6 +193,7 @@ public class UserControllerTest extends AbstractTest {
 		UserUpdateInDto updateInDto = new UserUpdateInDto(null, null, null, null);
 
 		mockMvc.perform(put("/users/{userId}", -1)
+						.header(HttpHeaders.AUTHORIZATION, jwtAuthorizationHeader(admin.getId()))
 						.content(toJsonBytes(updateInDto))
 						.contentType(APPLICATION_JSON))
 				.andExpect(status().isBadRequest())
@@ -200,7 +209,8 @@ public class UserControllerTest extends AbstractTest {
 		User user = createUser("userLogin", "userFirstName", "userLastName", UserRole.TEACHER);
 		createUser("otherUserLogin", "otherUserFirstName", "otherUserLastName", UserRole.STUDENT);
 
-		MvcResult result = mockMvc.perform(get("/users/{userId}", user.getId()))
+		MvcResult result = mockMvc.perform(get("/users/{userId}", user.getId())
+				.header(HttpHeaders.AUTHORIZATION, jwtAuthorizationHeader(admin.getId())))
 				.andExpect(status().isOk())
 				.andReturn();
 
@@ -211,7 +221,8 @@ public class UserControllerTest extends AbstractTest {
 
 	@Test
 	public void getUser_UserNotFount_Success() throws Exception {
-		mockMvc.perform(get("/users/{userId}", -1))
+		mockMvc.perform(get("/users/{userId}", -1)
+				.header(HttpHeaders.AUTHORIZATION, jwtAuthorizationHeader(admin.getId())))
 				.andExpect(status().isNotFound())
 				.andExpect(jsonPath("$.error.status", is(NOT_FOUND.value())))
 				.andExpect(jsonPath("$.error.message", is("User not found")));
@@ -222,7 +233,8 @@ public class UserControllerTest extends AbstractTest {
 		User user = createUser("userLogin", "userFirstName", "userLastName", UserRole.TEACHER);
 		User otherUser = createUser("otherUserLogin", "otherUserFirstName", "otherUserLastName", UserRole.STUDENT);
 
-		mockMvc.perform(delete("/users/{userId}", user.getId()))
+		mockMvc.perform(delete("/users/{userId}", user.getId())
+				.header(HttpHeaders.AUTHORIZATION, jwtAuthorizationHeader(admin.getId())))
 				.andExpect(status().isOk())
 				.andReturn();
 
@@ -233,7 +245,8 @@ public class UserControllerTest extends AbstractTest {
 
 	@Test
 	public void deleteUser_UserNotFound_Fail() throws Exception {
-		mockMvc.perform(delete("/users/{userId}", -1))
+		mockMvc.perform(delete("/users/{userId}", -1)
+				.header(HttpHeaders.AUTHORIZATION, jwtAuthorizationHeader(admin.getId())))
 				.andExpect(status().isNotFound())
 				.andExpect(jsonPath("$.error.status", is(NOT_FOUND.value())))
 				.andExpect(jsonPath("$.error.message", is("User not found")));
@@ -247,8 +260,6 @@ public class UserControllerTest extends AbstractTest {
 		User secondUser = createUser("zupin", "Gigi", "Hadid", UserRole.ADMIN);
 		User thirdUser = createUser("aupin", "Zendaya", "Furiya", UserRole.TEACHER);
 
-		authorize(firstUser.getId());
-
 		Map<UserSortField, List<User>> ascOrderBySort = new HashMap<>();
 		ascOrderBySort.put(UserSortField.ID, Arrays.asList(firstUser, secondUser, thirdUser));
 		ascOrderBySort.put(UserSortField.LOGIN, Arrays.asList(thirdUser, firstUser, secondUser));
@@ -261,6 +272,7 @@ public class UserControllerTest extends AbstractTest {
 		for (UserSortField sortField : sortFields) {
 			for (Boolean ascending : Arrays.asList(Boolean.TRUE, Boolean.FALSE, null)) {
 				MvcResult result = mockMvc.perform(get("/users")
+								.header(HttpHeaders.AUTHORIZATION, jwtAuthorizationHeader(firstUser.getId()))
 								.param("number", "0")
 								.param("size", "5")
 								.param("ascending", ascending != null ? ascending.toString() : null)
@@ -291,7 +303,8 @@ public class UserControllerTest extends AbstractTest {
 
 	@Test
 	public void getUsers_ParamsNotDefined_Fail() throws Exception {
-		mockMvc.perform(get("/users"))
+		mockMvc.perform(get("/users")
+				.header(HttpHeaders.AUTHORIZATION, jwtAuthorizationHeader(admin.getId())))
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.error.status", is(BAD_REQUEST.value())))
 				.andExpect(jsonPath("$.error.message", containsString("Page size isn't defined")))

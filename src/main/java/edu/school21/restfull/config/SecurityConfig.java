@@ -7,6 +7,7 @@ import edu.school21.restfull.security.password.LoginPasswordAuthenticationEntryP
 import edu.school21.restfull.security.jwt.JwtAuthenticationFilter;
 import edu.school21.restfull.security.password.LoginPasswordAuthenticationFilter;
 import edu.school21.restfull.security.password.LoginPasswordAuthenticationProvider;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -19,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AndRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 @EnableWebSecurity
@@ -43,15 +45,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		// Добавляем все префиксы урл, которые нужно авторизовать с помощью jwt
-		RequestMatcher jwtAuthenticationMatcher = new AndRequestMatcher(
+		RequestMatcher jwtAuthenticationMatcher = new OrRequestMatcher(
 				new AntPathRequestMatcher("/users/**"),
-				new AntPathRequestMatcher("/course/**")
+				new AntPathRequestMatcher("/courses/**")
 		);
 
 		http
 				.csrf().disable()
 				.authorizeRequests()
-					.antMatchers( "/swagger-ui/**", "/swagger-resources/**", "/v2/api-docs/**", "/webjars/**", "/signIn").permitAll()
+					.antMatchers( "/swagger-ui/**", "/swagger-resources/**", "/v2/api-docs/**", "/webjars/**").permitAll()
 					.anyRequest().authenticated()
 					.and()
 				.addFilterAt(

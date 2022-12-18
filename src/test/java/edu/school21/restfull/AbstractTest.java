@@ -41,11 +41,10 @@ public class AbstractTest {
 				.build();
 	}
 
-	protected void authorize(long userId) {
-		// Imitate jwt authentication
+	protected String jwtAuthorizationHeader(long userId) {
 		User user = userRepository.findById(userId).orElseThrow(AssertionError::new);
 		String jwt = jwtTokenManager.generateToken(new CustomUserDetails(user));
-		jwtAuthenticationProvider.authenticate(new JwtAuthenticationToken(jwt));
+		return "Bearer " + jwt;
 	}
 
 }
