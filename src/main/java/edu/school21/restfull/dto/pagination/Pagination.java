@@ -18,7 +18,7 @@ public class Pagination <T extends SortField> {
 	@NotNull(message = "Page number isn't defined")
 	Integer number;
 
-	@ApiModelProperty(value = "Field name", required = true)
+	@ApiModelProperty(value = "Field name")
 	@NotNull(message = "Field name isn't defined")
 	T sortField;
 
