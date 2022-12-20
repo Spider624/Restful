@@ -1,12 +1,10 @@
 package edu.school21.restfull.web.controller;
 
 import edu.school21.restfull.AbstractTest;
-import edu.school21.restfull.dto.pagination.ContentPage;
 import edu.school21.restfull.dto.user.UserBaseDto;
 import edu.school21.restfull.dto.user.UserCreateInDto;
 import edu.school21.restfull.dto.user.UserCreateOutDto;
 import edu.school21.restfull.dto.user.UserOutDto;
-import edu.school21.restfull.dto.user.UserSortField;
 import edu.school21.restfull.dto.user.UserUpdateInDto;
 import edu.school21.restfull.model.User;
 import edu.school21.restfull.model.type.UserRole;
@@ -14,23 +12,19 @@ import edu.school21.restfull.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import static edu.school21.restfull.util.TestUtils.toJsonBytes;
-import static edu.school21.restfull.util.TestUtils.toObject;
-import static edu.school21.restfull.util.TestUtils.toPage;
+import static edu.school21.restfull.util.TestUtils.*;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -69,9 +63,13 @@ public class UserControllerTest extends AbstractTest {
 						.content(toJsonBytes(createInDto))
 						.contentType(APPLICATION_JSON))
 				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.*.id", notNullValue()))
 				.andReturn();
 
-		UserCreateOutDto createOutDto = toObject(result, UserCreateOutDto.class);
+		EntityModel<UserCreateOutDto> entityModel = toEntityModel(result, UserCreateOutDto.class);
+		assertNotNull(entityModel);
+
+		UserCreateOutDto createOutDto = entityModel.getContent();
 		assertNotNull(createOutDto);
 
 		User user = userRepository.findAll().stream()
@@ -136,7 +134,10 @@ public class UserControllerTest extends AbstractTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		UserCreateOutDto createOutDto = toObject(result, UserCreateOutDto.class);
+		EntityModel<UserCreateOutDto> entityModel = toEntityModel(result, UserCreateOutDto.class);
+		assertNotNull(entityModel);
+
+		UserCreateOutDto createOutDto = entityModel.getContent();
 		assertNotNull(createOutDto);
 
 		User user = userRepository.findAll().stream()
@@ -152,7 +153,7 @@ public class UserControllerTest extends AbstractTest {
 						.header(HttpHeaders.AUTHORIZATION, jwtAuthorizationHeader(admin.getId()))
 						.content(toJsonBytes(updateInDto))
 						.contentType(APPLICATION_JSON))
-				.andExpect(status().isOk())
+				.andExpect(status().isNoContent())
 				.andReturn();
 
 		user = userRepository.findById(user.getId()).orElseThrow(AssertionError::new);
@@ -214,7 +215,10 @@ public class UserControllerTest extends AbstractTest {
 				.andExpect(status().isOk())
 				.andReturn();
 
-		UserOutDto outDto = toObject(result, UserOutDto.class);
+		EntityModel<UserOutDto> entityModel = toEntityModel(result, UserOutDto.class);
+		assertNotNull(entityModel);
+
+		UserOutDto outDto = entityModel.getContent();
 		assertNotNull(outDto);
 		assertUser(user, outDto);
 	}
@@ -235,7 +239,7 @@ public class UserControllerTest extends AbstractTest {
 
 		mockMvc.perform(delete("/users/{userId}", user.getId())
 				.header(HttpHeaders.AUTHORIZATION, jwtAuthorizationHeader(admin.getId())))
-				.andExpect(status().isOk())
+				.andExpect(status().isNoContent())
 				.andReturn();
 
 		List<User> users = userRepository.findAll();
@@ -256,49 +260,33 @@ public class UserControllerTest extends AbstractTest {
 	public void getUsers_Success() throws Exception {
 		userRepository.deleteAll();
 
-		User firstUser = createUser("lupin", "Anton", "Belov", UserRole.STUDENT);
-		User secondUser = createUser("zupin", "Gigi", "Hadid", UserRole.ADMIN);
-		User thirdUser = createUser("aupin", "Zendaya", "Furiya", UserRole.TEACHER);
+		User lupin = createUser("lupin", "Anton", "Belov", UserRole.STUDENT);
+		User zupin = createUser("zupin", "Gigi", "Hadid", UserRole.ADMIN);
+		User aupin = createUser("aupin", "Zendaya", "Furiya", UserRole.TEACHER);
 
-		Map<UserSortField, List<User>> ascOrderBySort = new HashMap<>();
-		ascOrderBySort.put(UserSortField.ID, Arrays.asList(firstUser, secondUser, thirdUser));
-		ascOrderBySort.put(UserSortField.LOGIN, Arrays.asList(thirdUser, firstUser, secondUser));
-		ascOrderBySort.put(UserSortField.FIRST_NAME, Arrays.asList(firstUser, secondUser, thirdUser));
-		ascOrderBySort.put(UserSortField.LAST_NAME, Arrays.asList(firstUser, thirdUser, secondUser));
-		ascOrderBySort.put(UserSortField.ROLE, Arrays.asList(secondUser, thirdUser, firstUser));
-
-		List<UserSortField> sortFields = new ArrayList<>(Arrays.asList(UserSortField.values()));
-		sortFields.add(null);
-		for (UserSortField sortField : sortFields) {
-			for (Boolean ascending : Arrays.asList(Boolean.TRUE, Boolean.FALSE, null)) {
-				MvcResult result = mockMvc.perform(get("/users")
-								.header(HttpHeaders.AUTHORIZATION, jwtAuthorizationHeader(firstUser.getId()))
-								.param("number", "0")
-								.param("size", "5")
-								.param("ascending", ascending != null ? ascending.toString() : null)
-								.param("sortField", sortField != null ? sortField.name() : null))
-						.andExpect(status().isOk())
-						.andReturn();
-
-				ascending = ascending == null ? Boolean.TRUE : ascending; // true is default value for ascending
-				sortField = sortField == null ? UserSortField.ID : sortField; // id is default value for sortField
-
-				ContentPage<UserOutDto> page = toPage(result, UserOutDto.class);
-				assertNotNull(page);
-
-				List<UserOutDto> actual = page.getContent();
-
-				List<User> expected = new ArrayList<>(ascOrderBySort.get(sortField));
-				if (!ascending) {
-					Collections.reverse(expected);
-				}
-
-				assertEquals(expected.size(), actual.size());
-				for (int i = 0; i < expected.size(); ++i) {
-					assertUser(expected.get(i), actual.get(i));
-				}
-			}
-		}
+		mockMvc.perform(get("/users")
+						.header(HttpHeaders.AUTHORIZATION, jwtAuthorizationHeader(lupin.getId()))
+						.param("number", "0")
+						.param("size", "5")
+						.param("ascending", "true")
+						.param("sortField", "LOGIN"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$._embedded.users", hasSize(3)))
+				.andExpect(jsonPath("$._embedded.users[0].id", is(aupin.getId().intValue())))
+				.andExpect(jsonPath("$._embedded.users[0].login", is(aupin.getLogin())))
+				.andExpect(jsonPath("$._embedded.users[0].firstName", is(aupin.getFirstName())))
+				.andExpect(jsonPath("$._embedded.users[0].lastName", is(aupin.getLastName())))
+				.andExpect(jsonPath("$._embedded.users[0].role", is(aupin.getRole().name())))
+				.andExpect(jsonPath("$._embedded.users[1].id", is(lupin.getId().intValue())))
+				.andExpect(jsonPath("$._embedded.users[1].login", is(lupin.getLogin())))
+				.andExpect(jsonPath("$._embedded.users[1].firstName", is(lupin.getFirstName())))
+				.andExpect(jsonPath("$._embedded.users[1].lastName", is(lupin.getLastName())))
+				.andExpect(jsonPath("$._embedded.users[1].role", is(lupin.getRole().name())))
+				.andExpect(jsonPath("$._embedded.users[2].id", is(zupin.getId().intValue())))
+				.andExpect(jsonPath("$._embedded.users[2].login", is(zupin.getLogin())))
+				.andExpect(jsonPath("$._embedded.users[2].firstName", is(zupin.getFirstName())))
+				.andExpect(jsonPath("$._embedded.users[2].lastName", is(zupin.getLastName())))
+				.andExpect(jsonPath("$._embedded.users[2].role", is(zupin.getRole().name())));
 	}
 
 	@Test
@@ -306,9 +294,7 @@ public class UserControllerTest extends AbstractTest {
 		mockMvc.perform(get("/users")
 				.header(HttpHeaders.AUTHORIZATION, jwtAuthorizationHeader(admin.getId())))
 				.andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.error.status", is(BAD_REQUEST.value())))
-				.andExpect(jsonPath("$.error.message", containsString("Page size isn't defined")))
-				.andExpect(jsonPath("$.error.message", containsString("Page number isn't defined")));
+				.andExpect(jsonPath("$.error.status", is(BAD_REQUEST.value())));
 	}
 
 

@@ -37,7 +37,7 @@ public class SwaggerConfig {
 				.securityContexts(Collections.singletonList(securityContext()))
 				.securitySchemes(Collections.singletonList(apiKey()))
 				.select()
-				.apis(RequestHandlerSelectors.basePackage("edu.school21.restfull"))
+				.apis(RequestHandlerSelectors.basePackage("edu.school21.restfull.web.controller"))
 				.build()
 				.apiInfo(apiInfo())
 				.groupName("Api");

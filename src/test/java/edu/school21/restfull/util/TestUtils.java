@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.school21.restfull.dto.pagination.ContentPage;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.io.UnsupportedEncodingException;
@@ -22,17 +24,9 @@ public final class TestUtils {
 		}
 	}
 
-	public static  <O> O toObject(MvcResult result, Class<O> objectClazz) {
+	public static <O> EntityModel<O> toEntityModel(MvcResult result, Class<O> clazz) {
 		try {
-			return OBJECT_MAPPER.readValue(json(result), objectClazz);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public static <T> ContentPage<T> toPage(MvcResult result, Class<T> clazz) {
-		try {
-			return OBJECT_MAPPER.readValue(json(result), OBJECT_MAPPER.getTypeFactory().constructParametricType(ContentPage.class, clazz));
+			return OBJECT_MAPPER.readValue(json(result), OBJECT_MAPPER.getTypeFactory().constructParametricType(EntityModel.class, clazz));
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

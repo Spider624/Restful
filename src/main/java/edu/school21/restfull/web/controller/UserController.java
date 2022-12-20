@@ -60,23 +60,23 @@ public class UserController {
 
 	@ApiOperation("Get all users with pagination and sorting")
 	@GetMapping
-	public PagedModel<EntityModel<UserOutDto>> getUsers(@RequestParam("number") Integer number,
-														@RequestParam("size") Integer size,
-														@RequestParam(value = "field", required = false) @Nullable UserSortField sortField,
+	public PagedModel<EntityModel<UserOutDto>> getUsers(@RequestParam("number") Integer pageNumber,
+														@RequestParam("size") Integer pageSize,
+														@RequestParam(value = "sortField", required = false) @Nullable UserSortField sortField,
 														@RequestParam(value = "ascending", required = false) @Nullable Boolean ascending) {
 		sortField = Optional.ofNullable(sortField).orElse(UserSortField.ID);
 		ascending = Optional.ofNullable(ascending).orElse(Boolean.TRUE);
 
-		ContentPage<UserOutDto> page = userService.getUsers(new Pagination<>(size, number, sortField, ascending));
+		ContentPage<UserOutDto> page = userService.getUsers(new Pagination<>(pageSize, pageNumber, sortField, ascending));
 
-		Link selfLink = linkTo(methodOn(UserController.class).getUsers(number, size, sortField, ascending)).withSelfRel();
+		Link selfLink = linkTo(methodOn(UserController.class).getUsers(pageNumber, pageSize, sortField, ascending)).withSelfRel();
 		if (SecurityUtils.getCurrentUserRole() == UserRole.ADMIN) {
 			selfLink = selfLink.andAffordance(afford(methodOn(UserController.class).createUser(null)));
 		}
 
 		return PagedModel.of(
 				page.getContent().stream().map(this::toEntityModel).collect(Collectors.toList()),
-				new PagedModel.PageMetadata(page.getSize(), page.getNumber(), 1),
+				new PagedModel.PageMetadata(page.getPageSize(), page.getPageNumber(), page.getTotalElements(), page.getTotalPageNumber()),
 				selfLink);
 	}
 
