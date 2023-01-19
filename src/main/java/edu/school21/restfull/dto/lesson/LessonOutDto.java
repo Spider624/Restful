@@ -10,11 +10,13 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.Value;
+import lombok.experimental.NonFinal;
 
 import java.time.LocalTime;
 
 @ApiModel("Detail lesson info")
 @Value
+@NonFinal
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class LessonOutDto extends LessonBaseDto {

@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 
 public class LocalTimeDeserializer extends JsonDeserializer<LocalTime> {
 
-	public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss");
+	public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
 	@Override
 	public LocalTime deserialize(JsonParser p, DeserializationContext deserializationContext) throws IOException, JacksonException {

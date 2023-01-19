@@ -5,11 +5,13 @@ import edu.school21.restfull.model.Lesson;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
+@RestResource(exported = false)
 public interface LessonRepository extends JpaRepository<Lesson, Long> {
 
 	Page<Lesson> findAllByCourse(Course course, Pageable pageable);

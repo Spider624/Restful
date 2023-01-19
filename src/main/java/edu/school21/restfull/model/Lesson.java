@@ -20,6 +20,7 @@ public class Lesson extends AbstractModel {
 	private LocalTime endTime;
 
 	@Column(nullable = false, length = WeekDay.LENGTH)
+	@Enumerated(EnumType.STRING)
 	private WeekDay weekDay;
 
 	@ManyToOne(fetch = FetchType.LAZY)

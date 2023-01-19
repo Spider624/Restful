@@ -1,5 +1,6 @@
 package edu.school21.restfull.model;
 
+import edu.school21.restfull.model.type.CourseStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +30,10 @@ public class Course extends AbstractModel {
 
 	@Column(nullable = false, length = DESCRIPTION_LENGTH)
 	private String description;
+
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false, length = CourseStatus.LENGTH)
+	private CourseStatus status = CourseStatus.DRAFT;
 
 	@Setter(AccessLevel.NONE)
 	@ManyToMany

@@ -15,6 +15,7 @@ import edu.school21.restfull.exception.RestfullNotFoundException;
 import edu.school21.restfull.model.Course;
 import edu.school21.restfull.model.Lesson;
 import edu.school21.restfull.model.User;
+import edu.school21.restfull.model.type.CourseStatus;
 import edu.school21.restfull.model.type.UserRole;
 import edu.school21.restfull.repository.CourseRepository;
 import edu.school21.restfull.repository.LessonRepository;
@@ -97,6 +98,14 @@ public class CourseService {
 		courseMapper.update(course, dto);
 
 		log.debug("Course [{}] was updated", course.getName());
+	}
+
+	@Transactional
+	public void publishCourse(long courseId) {
+		Course course = findCourse(courseId);
+		course.setStatus(CourseStatus.PUBLISHED);
+
+		log.debug("Course [{}] was published", course.getName());
 	}
 
 	@Transactional

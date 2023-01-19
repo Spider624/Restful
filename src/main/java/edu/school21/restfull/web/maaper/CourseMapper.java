@@ -12,6 +12,7 @@ public abstract class CourseMapper {
 
 	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "uuid", ignore = true)
+	@Mapping(target = "status", ignore = true)
 	public abstract void update(@MappingTarget Course target, CourseInDto source);
 
 	public abstract CourseOutDto map(Course course);
