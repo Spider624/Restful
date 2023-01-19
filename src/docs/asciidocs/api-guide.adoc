@@ -1,0 +1,30 @@
+= Course API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+
+== Methods
+
+=== Course publish
+
+You can publish a course with status DRAFT, of course if you are ADMIN
+
+==== Request
+
+include::{snippets}/course-controller-test/publish-course_-success/http-request.adoc[]
+
+==== CURL request
+
+include::{snippets}/course-controller-test/publish-course_-success/curl-request.adoc[]
+
+==== Response
+
+include::{snippets}/course-controller-test/publish-course_-success/http-response.adoc[]
+
+==== Response fields
+
+include::{snippets}/course-controller-test/publish-course_-success/response-fields.adoc[]

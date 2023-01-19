@@ -311,14 +311,4 @@ public class UserControllerTest extends AbstractTest {
 		}
 	}
 
-	private User createUser(String login, String firstName, String lastName, UserRole role) {
-		User user = new User();
-		user.setLogin(login);
-		user.setFirstName(firstName);
-		user.setLastName(lastName);
-		user.setRole(role);
-		user.setPassword(passwordEncoder.encode("12345"));
-
-		return userRepository.save(user);
-	}
 }

@@ -107,10 +107,10 @@ public class CourseController {
 
 	@ApiOperation("Publish course")
 	@Secured(value = UserRole.Authorities.ADMIN)
-	@PutMapping("{courseId}/publish")
-	public ResponseEntity<?> publishCourse(@PathVariable("courseId") long courseId) {
-		courseService.publishCourse(courseId);
-		return ResponseEntity.noContent().build();
+	@PostMapping("{courseId}/publish")
+	public EntityModel<CourseOutDto> publishCourse(@PathVariable("courseId") long courseId) {
+		CourseOutDto outDto = courseService.publishCourse(courseId);
+		return EntityModel.of(outDto, linkTo(methodOn(CourseController.class).getCourse(courseId)).withRel("course"));
 	}
 
 	@ApiOperation("Delete course")

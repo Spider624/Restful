@@ -101,11 +101,17 @@ public class CourseService {
 	}
 
 	@Transactional
-	public void publishCourse(long courseId) {
+	public CourseOutDto publishCourse(long courseId) {
 		Course course = findCourse(courseId);
+		if (course.getStatus() == CourseStatus.PUBLISHED) {
+			throw new RestfullBadRequestException("Course already published");
+		}
+
 		course.setStatus(CourseStatus.PUBLISHED);
 
 		log.debug("Course [{}] was published", course.getName());
+
+		return courseMapper.map(course);
 	}
 
 	@Transactional
