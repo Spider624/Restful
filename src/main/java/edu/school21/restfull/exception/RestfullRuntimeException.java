@@ -11,6 +11,11 @@ public class RestfullRuntimeException extends RuntimeException {
 		this.status = HttpStatus.INTERNAL_SERVER_ERROR;
 	}
 
+	public RestfullRuntimeException(String message, Throwable cause) {
+		super(message);
+		this.status = HttpStatus.INTERNAL_SERVER_ERROR;
+	}
+
 	public RestfullRuntimeException(String message, HttpStatus status) {
 		super(message);
 		this.status = status;

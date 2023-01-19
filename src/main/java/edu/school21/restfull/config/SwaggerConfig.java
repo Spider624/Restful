@@ -2,11 +2,15 @@ package edu.school21.restfull.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.builders.PathSelectors;
+import org.springframework.context.annotation.Profile;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.ApiKey;
+import springfox.documentation.service.AuthorizationScope;
 import springfox.documentation.service.Contact;
+import springfox.documentation.service.SecurityReference;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger.web.DocExpansion;
 import springfox.documentation.swagger.web.ModelRendering;
@@ -16,8 +20,11 @@ import springfox.documentation.swagger.web.UiConfiguration;
 import springfox.documentation.swagger.web.UiConfigurationBuilder;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collections;
 
+@Profile("!test")
 @EnableSwagger2
 @Configuration
 public class SwaggerConfig {
@@ -25,23 +32,32 @@ public class SwaggerConfig {
 	@Bean
 	public Docket apiGroup() {
 		return new Docket(DocumentationType.SWAGGER_2)
+				.directModelSubstitute(LocalDate.class, String.class)
+				.directModelSubstitute(LocalTime.class, String.class)
+				.securityContexts(Collections.singletonList(securityContext()))
+				.securitySchemes(Collections.singletonList(apiKey()))
 				.select()
-				.apis(RequestHandlerSelectors.any())
-				.paths(PathSelectors.ant("/courses/**"))
+				.apis(RequestHandlerSelectors.basePackage("edu.school21.restfull.web.controller"))
 				.build()
 				.apiInfo(apiInfo())
-				.groupName("courses");
+				.groupName("Api");
 	}
 
-	@Bean
-	public Docket apiMessage() {
-		return new Docket(DocumentationType.SWAGGER_2)
-				.select()
-				.apis(RequestHandlerSelectors.any())
-				.paths(PathSelectors.ant("/users/**"))
-				.build()
-				.apiInfo(apiInfo())
-				.groupName("users");
+	private ApiKey apiKey() {
+		return new ApiKey("JWT", "Authorization", "header");
+	}
+
+	private SecurityContext securityContext() {
+		return SecurityContext.builder()
+				.securityReferences(Collections.singletonList(jwtAuthReference()))
+				.build();
+	}
+
+	private SecurityReference jwtAuthReference() {
+		AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
+		AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
+		authorizationScopes[0] = authorizationScope;
+		return new SecurityReference("JWT", authorizationScopes);
 	}
 
 	@Bean

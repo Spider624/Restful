@@ -2,10 +2,7 @@ package edu.school21.restfull.serialization;
 
 import edu.school21.restfull.dto.pagination.Pagination;
 import edu.school21.restfull.dto.pagination.SortField;
-import edu.school21.restfull.exception.RestfullBadRequestException;
-import edu.school21.restfull.exception.RestfullRuntimeException;
 import org.springframework.core.MethodParameter;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -15,7 +12,7 @@ import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class PaginationHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
@@ -32,28 +29,32 @@ public class PaginationHandlerMethodArgumentResolver implements HandlerMethodArg
 
 		Integer size = Optional.ofNullable(webRequest.getParameter("size"))
 				.map(Integer::valueOf)
-				.orElseThrow(() -> new RestfullBadRequestException("Page size is not specified"));
+				.orElse(null);
 
 		Integer number = Optional.ofNullable(webRequest.getParameter("number"))
 				.map(Integer::valueOf)
-				.orElseThrow(() -> new RestfullBadRequestException("Page number is not specified"));
+				.orElse(null);
 
 		Boolean ascending = Optional.ofNullable(webRequest.getParameter("ascending"))
 				.map(Boolean::valueOf)
-				.orElseThrow(() -> new RestfullBadRequestException("Sort direction is not specified"));
+				.orElse(Boolean.TRUE);
 
 		Type type = parameter.getExecutable().getParameters()[parameter.getParameterIndex()].getParameterizedType();
 		Type sortFieldType = ((ParameterizedTypeImpl) type).getActualTypeArguments()[0];
 
-		String field = Optional.ofNullable(webRequest.getParameter("field"))
-				.orElseThrow(() -> new RestfullBadRequestException("Sort field is not specified"));
-
-		SortField sortField = Arrays.stream(((Class<SortField>) sortFieldType).getEnumConstants())
-				.filter(e -> e.getDtoFieldName().equals(field))
-				.findFirst()
-				.orElseThrow(() -> new RestfullBadRequestException("Unknown sort field"));
+		String field = webRequest.getParameter("sortField");
+		SortField sortField = field != null
+				? getSortField(sortFieldType, f ->  f.getDtoFieldName().equals(field))
+				: getSortField(sortFieldType, SortField::isDefault);
 
 		return new Pagination<>(size, number, sortField, ascending);
+	}
+
+	private SortField getSortField(Type sortFieldType, Predicate<SortField> predicate) {
+		return Arrays.stream(((Class<SortField>) sortFieldType).getEnumConstants())
+				.filter(predicate)
+				.findFirst()
+				.orElseThrow(AssertionError::new);
 	}
 
 }

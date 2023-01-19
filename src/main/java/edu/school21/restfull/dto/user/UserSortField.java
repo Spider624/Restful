@@ -17,6 +17,7 @@ public enum UserSortField implements SortField {
 
 	private final String dataFieldName;
 
+	@Override
 	public String getDataFieldName() {
 		return dataFieldName;
 	}
@@ -24,6 +25,11 @@ public enum UserSortField implements SortField {
 	@Override
 	public String getDtoFieldName() {
 		return name();
+	}
+
+	@Override
+	public Boolean isDefault() {
+		return this == ID;
 	}
 
 }
