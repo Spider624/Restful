@@ -19,6 +19,7 @@ public class Lesson extends AbstractModel {
 	@Column(nullable = false)
 	private LocalTime endTime;
 
+	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = WeekDay.LENGTH)
 	private WeekDay weekDay;
 

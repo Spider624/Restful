@@ -6,6 +6,8 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
 @Getter
@@ -29,6 +31,7 @@ public class User extends AbstractModel {
 	@Column(nullable = false)
 	private String password;
 
+	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = UserRole.LENGTH)
 	private UserRole role;
 
