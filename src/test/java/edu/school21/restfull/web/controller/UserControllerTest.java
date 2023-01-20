@@ -265,7 +265,7 @@ public class UserControllerTest extends AbstractTest {
 		ascOrderBySort.put(UserSortField.LOGIN, Arrays.asList(thirdUser, firstUser, secondUser));
 		ascOrderBySort.put(UserSortField.FIRST_NAME, Arrays.asList(firstUser, secondUser, thirdUser));
 		ascOrderBySort.put(UserSortField.LAST_NAME, Arrays.asList(firstUser, thirdUser, secondUser));
-		ascOrderBySort.put(UserSortField.ROLE, Arrays.asList(secondUser, thirdUser, firstUser));
+		ascOrderBySort.put(UserSortField.ROLE, Arrays.asList(secondUser, firstUser, thirdUser));
 
 		List<UserSortField> sortFields = new ArrayList<>(Arrays.asList(UserSortField.values()));
 		sortFields.add(null);
